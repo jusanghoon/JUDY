@@ -8,8 +8,8 @@
     <style>
         body {
             font-family: 'Noto Sans KR', sans-serif;
-            background-color: #f8fafc; /* bg-slate-50 */
-            color: #334155; /* text-slate-700 */
+            background-color: #f8fafc; 
+            color: #334155; 
             padding: 1rem; 
             line-height: 1.6;
         }
@@ -22,16 +22,16 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         h1, h2, h3 {
-            color: #0f769e; /* text-sky-700 variant */
+            color: #0f769e; 
             margin-bottom: 1rem;
         }
-        h1 { font-size: 1.75rem; font-weight: bold; text-align: center; } /* 모바일 글꼴 크기 조정 */
-        h2 { font-size: 1.375rem; font-weight: bold; margin-top: 2rem; } /* 모바일 글꼴 크기 조정 */
-        h3 { font-size: 1.125rem; font-weight: bold; } /* 모바일 글꼴 크기 조정 */
+        h1 { font-size: 1.75rem; font-weight: bold; text-align: center; } 
+        h2 { font-size: 1.375rem; font-weight: bold; margin-top: 2rem; } 
+        h3 { font-size: 1.125rem; font-weight: bold; } 
         
         .table-container { 
             width: 100%;
-            overflow-x: auto; /* 여전히 작은 화면 대비 스크롤 옵션은 남겨둡니다. */
+            overflow-x: auto; 
             -webkit-overflow-scrolling: touch; 
             margin-bottom: 1.5rem;
             border: 1px solid #e2e8f0; 
@@ -39,24 +39,27 @@
         }
         table {
             width: 100%;
-            /* min-width 제거 또는 매우 작은 값으로 설정 */
+            table-layout: fixed; /* 중요: 테이블 레이아웃 고정 */
             border-collapse: collapse;
         }
         th, td {
             border: 1px solid #e2e8f0; 
-            padding: 0.5rem; /* 패딩 약간 줄임 */
+            padding: 0.4rem; /* 패딩 더 줄임 */
             text-align: left;
-            font-size: 0.8rem; /* 글자 크기 약간 줄임 */
-            white-space: normal; /* 줄바꿈 허용 */
+            font-size: 0.75rem; /* 글자 크기 더 줄임 */
+            white-space: normal; 
+            word-break: break-word; /* 긴 단어 강제 줄바꿈 */
         }
         th {
             background-color: #f1f5f9; 
             font-weight: 600;
-            /* position: sticky; left: 0; z-index: 1; -> 가로 스크롤이 주가 아니므로 제거 또는 선택적용 */
         }
-        th:first-child, td:first-child { /* 첫번째 열은 약간 더 넓게 */
-            min-width: 100px;
-        }
+        /* 각 열의 너비 비율 지정 */
+        th:nth-child(1), td:nth-child(1) { width: 30%; } /* PID 항목 */
+        th:nth-child(2), td:nth-child(2) { width: 15%; } /* 측정 단위 */
+        th:nth-child(3), td:nth-child(3) { width: 27.5%; } /* 정상 공회전 상태 */
+        th:nth-child(4), td:nth-child(4) { width: 27.5%; } /* 이상 데이터 관찰 시 */
+
         td.highlight { 
             font-weight: bold;
             color: #dc2626; 
@@ -64,10 +67,10 @@
         .scenario-description, .quiz-section, .customer-complaint {
             background-color: #f0f9ff; 
             border: 1px solid #bae6fd; 
-            padding: 1rem; /* 패딩 약간 줄임 */
+            padding: 1rem; 
             border-radius: 0.5rem;
             margin-bottom: 1.5rem;
-            font-size: 0.875rem; /* 글자 크기 약간 줄임 */
+            font-size: 0.875rem; 
             color: #374151; 
         }
         .customer-complaint h3 {
