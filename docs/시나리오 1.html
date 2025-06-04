@@ -284,7 +284,6 @@
 
             if (userAnswer === correctAnswer) {
                 const tableBodyRows = document.querySelectorAll('.table-container table tbody tr');
-                // 표의 실제 데이터 행 인덱스에 맞게 수정 (0부터 시작)
                 const shrtft1Value = tableBodyRows[2].cells[3].textContent.trim(); 
                 const longft1Value = tableBodyRows[3].cells[3].textContent.trim();
                 const o2s11Value = tableBodyRows[5].cells[3].textContent.trim(); 
@@ -294,7 +293,7 @@
                 let explanationHTML = "<strong>정답입니다! PID 데이터를 정확히 분석하셨네요.</strong><div class='feedback-details'>주요 단서는 다음과 같습니다:<br><br>";
                 explanationHTML += `<strong>단기 연료 보정 (SHRTFT1) ${shrtft1Value}:</strong> ${pidExplanations.shrtft1}<br><br>`;
                 explanationHTML += `<strong>장기 연료 보정 (LONGFT1) ${longft1Value}:</strong> ${pidExplanations.longft1}<br><br>`;
-                explanationHTML += `<strong>흡기 매니폴드 압력 (MAP) ${mapValue}:</strong> ${pidExplanations.map_high}<br><br>`; // pidExplanations 키값 수정
+                explanationHTML += `<strong>흡기 매니폴드 압력 (MAP) ${mapValue}:</strong> ${pidExplanations.map_high}<br><br>`;
                 explanationHTML += `<strong>연료 분사 시간 (FUELPW1) ${fuelpw1Value}:</strong> ${pidExplanations.fuelpw1_increase}<br><br>`;
                 explanationHTML += `<strong>산소 센서 값의 변화 (${o2s11Value}):</strong> ${pidExplanations.o2s11_lean_then_corrects}<br><br>`;
                 explanationHTML += `이러한 현상들은 측정되지 않은 공기(도둑 공기)가 흡기 시스템으로 유입되어 PCM이 연료를 과도하게 보상하고 있음을 나타냅니다. 고객이 언급한 RPM 불안정, 연비 저하, 간헐적 떨림 증상과도 일치합니다.</div>`;
@@ -302,10 +301,23 @@
                 feedbackMessage.className = 'feedback correct';
             } else {
                 let explanation = "<strong>오답입니다. 다시 한번 PID 데이터를 살펴보세요.</strong><div class='feedback-details'>";
-                if (userAnswer === 'a') explanation += "연료 필터가 막히면 연료 압력이 낮아지고, 연료 보정 값은 희박 상태를 보상하려 하겠지만 MAP 센서 값의 변화는 이 시나리오와 다를 수 있습니다. 고객 증상 중 연비 저하는 가능하나 RPM 불안정이나 MAP 값 상승과는 직접적 연관이 적습니다.";
-                else if (userAnswer === 'b') explanation += "단일 실린더의 점화 코일 불량은 특정 실린더의 실화(Misfire)를 유발하며, 이 경우 실린더별 가속도(CYL_ACCL) 값에 뚜렷한 불균형이 나타나야 합니다. 이 시나리오는 전반적인 연료 보정 값 상승과 MAP 값 변화를 보입니다.";
-                else if (userAnswer === 'd') explanation += "냉각수 온도 센서 이상 시에는 ECT 값이 비정상적으로 표시되며, 이를 바탕으로 PCM이 연료량을 잘못 조절할 수 있지만, MAP 센서 값의 직접적인 상승이나 현재와 같은 연료 보정 패턴과는 다를 수 있습니다.";
-                else if (userAnswer === 'e') explanation += "EVAP 퍼지 밸브가 열린 채로 고착되면 연료 탱크의 증기가 지속적으로 유입되어 농후 상태를 유발하고 연료 보정 값은 마이너스(-)로 향하는 경향을 보입니다. 현재 시나리오는 희박 상태를 보상하는 정반대의 상황입니다.";
+                if (userAnswer === 'a') {
+                    explanation += "<strong>A. 연료 필터 막힘 선택:</strong> 연료 필터가 막히면 엔진으로 공급되는 연료량이 부족해져 전반적인 출력 저하, 가속 불량, 심하면 시동 꺼짐 증상이 나타날 수 있습니다. ";
+                    explanation += "이 경우, PCM은 연료 부족(희박 상태)을 감지하고 연료 보정 값(SHRTFT, LONGFT)을 플러스(+)로 올리려고 시도하며, 연료 분사 시간(FUELPW1)도 늘어날 수 있습니다. ";
+                    explanation += "하지만, 흡기 매니폴드 압력(MAP) 값은 직접적으로 크게 변하지 않거나, 오히려 엔진 부조로 인해 진공이 더 불안정해질 수 있습니다. 이 시나리오의 MAP 값 상승과는 패턴이 다릅니다.";
+                } else if (userAnswer === 'b') {
+                    explanation += "<strong>B. 점화 코일 불량 (단일 실린더) 선택:</strong> 특정 실린더의 점화 코일이 불량하면 해당 실린더에서 실화(Misfire)가 발생합니다. ";
+                    explanationHTML += "이 경우, 실린더별 가속도(CYL_ACCL) 값에서 특정 실린더만 현저히 낮은 값을 보이며, 엔진 부조(떨림)가 뚜렷하게 나타납니다. ";
+                    explanation += "산소 센서는 간헐적으로 희박 신호를 보낼 수 있고 연료 보정 값이 변동할 수 있지만, 이 시나리오처럼 모든 실린더에 영향을 주는 듯한 전반적인 높은 연료 보정 값과 MAP 값 상승과는 양상이 다릅니다.";
+                } else if (userAnswer === 'd') {
+                    explanation += "<strong>D. 냉각수 온도 센서 이상 선택:</strong> 냉각수 온도 센서(ECT)가 실제보다 낮은 온도를 PCM에 보고하면, PCM은 엔진이 아직 차갑다고 판단하여 연료를 더 농후하게 분사하려고 할 수 있습니다. ";
+                    explanation += "이 경우 연료 보정 값은 마이너스(-)로 향하거나, 엔진이 과열될 수도 있습니다. 또한, ECT 센서 값 자체가 비정상적으로 표시될 것입니다. ";
+                    explanation += "이 시나리오의 높은 플러스(+) 연료 보정 값이나 MAP 값 상승과는 직접적인 관련이 적습니다.";
+                } else if (userAnswer === 'e') {
+                    explanation += "<strong>E. EVAP 퍼지 밸브 고착 (열림) 선택:</strong> EVAP 퍼지 밸브가 열린 상태로 고착되면, 연료 탱크의 증기가 지속적으로 흡기 매니폴드로 유입됩니다. ";
+                    explanation += "이는 추가적인 연료가 공급되는 것과 같으므로, PCM은 혼합비가 농후하다고 판단하여 연료 보정 값(SHRTFT, LONGFT)을 마이너스(-)로 줄이려고 시도합니다. ";
+                    explanation += "또한, 연료 냄새가 날 수도 있습니다. 이 시나리오는 연료 보정 값이 플러스(+)로 매우 높은 정반대의 상황입니다.";
+                }
                 explanation += "<br><br><strong>힌트:</strong> 고객의 증상(RPM 불안정, 연비 저하, 떨림)과 함께, 특히 매우 높은 플러스(+) 연료 보정 값들(SHRTFT1, LONGFT1)과 MAP 센서 값의 상승, 그리고 증가된 연료 분사 시간에 주목해보세요. 이는 엔진이 예상보다 많은 공기를 받아들이고 있고, 이를 보상하기 위해 연료를 많이 넣고 있음을 시사합니다.</div>";
                 feedbackMessage.innerHTML = explanation;
                 feedbackMessage.className = 'feedback incorrect';
@@ -313,10 +325,6 @@
             feedbackMessage.style.display = 'block';
         });
     </script>
-
-</body>
-</html>
-
 
 </body>
 </html>
