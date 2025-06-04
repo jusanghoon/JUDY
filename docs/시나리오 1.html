@@ -44,11 +44,12 @@
             background-color: #f1f5f9; /* bg-slate-100 */
             font-weight: 600;
         }
+        /* .highlight class는 유지하되, 텍스트 강조는 제거 */
         td.highlight {
-            font-weight: bold;
-            color: #dc2626; /* text-red-600 */
+            font-weight: normal; /* bold 제거 */
+            color: inherit; /* 기본 텍스트 색상으로 변경 */
         }
-        .scenario-description, .quiz-section {
+        .scenario-description, .quiz-section, .customer-complaint {
             background-color: #f0f9ff; /* bg-sky-50 */
             border: 1px solid #bae6fd; /* border-sky-200 */
             padding: 1.5rem;
@@ -56,6 +57,9 @@
             margin-bottom: 1.5rem;
             font-size: 0.9rem;
             color: #374151; /* text-gray-700 */
+        }
+        .customer-complaint h3 {
+            color: #be123c; /* text-rose-700 */
         }
         .quiz-section h3 {
             color: #0369a1; /* text-sky-700 */
@@ -98,12 +102,12 @@
             border-radius: 0.375rem;
             font-weight: 500;
         }
-        .feedback.neutral { /* 중립적인 피드백을 위한 스타일 추가 */
+        .feedback.neutral {
             background-color: #e0e7ff; /* bg-indigo-100 */
             color: #4338ca; /* text-indigo-700 */
             border: 1px solid #c7d2fe; /* border-indigo-300 */
         }
-        .feedback.incorrect { /* '보기를 선택해주세요' 메시지용 스타일은 유지 */
+        .feedback.incorrect {
             background-color: #fee2e2; /* bg-red-100 */
             color: #991b1b; /* text-red-700 */
             border: 1px solid #fecaca; /* border-red-300 */
@@ -112,20 +116,26 @@
 </head>
 <body>
     <div class="container">
-        <h1>엔진 진단 퀴즈</h1>
+        <h1>엔진 진단 시나리오</h1>
 
-        <h2>시나리오: 흡기 시스템 미세 누설 (진공 누설)</h2>
+        <h2>시나리오: 엔진 공회전 중 이상 데이터 관찰</h2>
         <div class="scenario-description">
             <h3>시나리오 개요</h3>
-            <p>차량은 정상 작동 온도로 예열된 후 공회전 상태입니다. 이때 흡기 시스템(예: 흡기 매니폴드, 진공 호스 등 공기량 센서 이후 부분) 어딘가에서 미세하게 공기가 새어 들어오고 있다고 가정합니다.</p>
+            <p>차량은 정상 작동 온도로 예열된 후 공회전 상태입니다. 특정 조건에서 아래와 같은 PID 데이터 변화가 관찰되었습니다.</p>
         </div>
+
+        <div class="customer-complaint">
+            <h3>고객 요청 사항</h3>
+            <p>"요즘 들어 차가 공회전할 때 RPM이 약간 불안정하고, 예전보다 기름도 조금 더 먹는 것 같아요. 가끔씩 아주 살짝 차가 떨리는 느낌도 있고요."</p>
+        </div>
+
         <table>
             <thead>
                 <tr>
                     <th>PID 항목</th>
                     <th>측정 단위</th>
                     <th>정상 공회전 상태 (예시 값)</th>
-                    <th>흡기 누설 발생 시 (공회전) (예시 값)</th>
+                    <th>이상 데이터 관찰 시 (공회전) (예시 값)</th>
                     <th>값의 변화 및 의미</th>
                 </tr>
             </thead>
@@ -135,59 +145,59 @@
                     <td>RPM</td>
                     <td>750</td>
                     <td>800 (약간 높거나 불안정)</td>
-                    <td>PCM이 희박한 혼합비를 보상하려 하거나, 불안정한 연소로 인해 공회전 RPM을 목표치로 유지하기 어려워져 약간 상승하거나 불안정해질 수 있습니다.</td>
+                    <td>PCM이 비정상적인 혼합비를 보상하려 하거나, 불안정한 연소로 인해 공회전 RPM을 목표치로 유지하기 어려워져 약간 상승하거나 불안정해질 수 있습니다.</td>
                 </tr>
                 <tr>
                     <td><strong>엔진 부하 (LOAD_ABSL)</strong></td>
                     <td>%</td>
                     <td>20</td>
                     <td>18 (실제 부하보다 낮게 계산될 수 있음)</td>
-                    <td>측정되지 않은 공기(도둑 공기)가 유입되면, MAF 센서가 실제보다 적은 공기량을 감지할 수 있습니다. PCM은 이를 기준으로 부하를 계산하므로, 실제 엔진이 겪는 부하보다 낮게 표시될 수 있습니다.</td>
+                    <td>엔진으로 유입되는 실제 공기량과 센서가 감지하는 공기량에 차이가 발생하면, PCM이 계산하는 엔진 부하 값이 실제와 다를 수 있습니다.</td>
                 </tr>
                 <tr>
                     <td><strong>단기 연료 보정 (SHRTFT1)</strong></td>
                     <td>%</td>
                     <td>-2 ~ +2 (안정적)</td>
                     <td class="highlight">+15 ~ +25 (높게 유지)</td>
-                    <td class="highlight"><strong>핵심 증상!</strong> 측정되지 않은 공기가 유입되어 연료-공기 혼합비가 희박해집니다. 산소 센서가 이를 감지하고 PCM은 연료를 더 많이 분사하도록 명령하여 이 값이 크게 상승합니다.</td>
+                    <td>엔진이 연료-공기 혼합비가 희박하다고 판단하여, PCM이 연료를 더 많이 분사하도록 명령하고 있음을 나타냅니다. 이 값이 지속적으로 높게 유지되는 것은 중요한 단서입니다.</td>
                 </tr>
                 <tr>
                     <td><strong>장기 연료 보정 (LONGFT1)</strong></td>
                     <td>%</td>
                     <td>1</td>
                     <td class="highlight">+10 (높게 학습됨)</td>
-                    <td class="highlight">단기 연료 보정만으로 희박 상태가 계속되면, PCM은 장기적으로 연료를 더 많이 공급하도록 학습합니다. 이 값이 높다는 것은 지속적인 희박 상태가 있었음을 의미합니다.</td>
+                    <td>단기 연료 보정만으로 희박 상태가 계속되면, PCM은 장기적으로 연료를 더 많이 공급하도록 학습합니다. 이 값이 높다는 것은 지속적인 희박 상태가 있었음을 의미합니다.</td>
                 </tr>
                 <tr>
                     <td><strong>점화 시기 (SPARKADV)</strong></td>
                     <td>도 (Degrees)</td>
                     <td>10</td>
                     <td>8 (약간 변동 또는 지각)</td>
-                    <td>희박한 혼합비는 연소 속도를 늦추거나 불안정하게 만들 수 있습니다. PCM은 최적의 연소를 위해 또는 노킹 방지를 위해 점화 시기를 약간 늦출(지각) 수 있습니다.</td>
+                    <td>비정상적인 혼합비는 연소 속도에 영향을 주거나 불안정한 연소를 유발할 수 있습니다. PCM은 최적의 연소를 위해 또는 노킹 방지를 위해 점화 시기를 조정할 수 있습니다.</td>
                 </tr>
                 <tr>
                     <td><strong>산소 센서 값 (O2S11 또는 EQ_RAT11)</strong></td>
                     <td>전압(V) 또는 비율</td>
                     <td>0.1~0.9V (정상 전환) 또는 약 1.0</td>
                     <td>0.1~0.9V (정상 전환 - 연료보정 후)</td>
-                    <td class="highlight"><strong>초기에는 희박 상태 (예: 0.1V 부근 지속 또는 EQ_RAT > 1.0)를 보이다가, PCM이 연료 보정(SHRTFT, LONGFT 상승)을 통해 연료를 충분히 추가하면 다시 정상적으로 전환될 수 있습니다.</strong> 하지만 보정값이 매우 높게 유지됩니다.</td>
+                    <td>초기에는 희박 상태 (예: 0.1V 부근 지속 또는 EQ_RAT > 1.0)를 보이다가, PCM이 연료 보정(SHRTFT, LONGFT 상승)을 통해 연료를 충분히 추가하면 다시 정상적으로 전환될 수 있습니다. 하지만 보정값이 매우 높게 유지됩니다.</td>
                 </tr>
                 <tr>
                     <td><strong>흡기 매니폴드 압력 (MAP)</strong></td>
                     <td>kPa</td>
                     <td>30 (높은 진공)</td>
                     <td class="highlight">40 (낮은 진공, 즉 압력 상승)</td>
-                    <td class="highlight"><strong>핵심 증상!</strong> 흡기 시스템에 누설이 생기면, 엔진이 빨아들이는 공기 통로에 구멍이 생긴 것과 같아서 매니폴드 내의 진공(음압)이 약해집니다. 진공이 약해지면 MAP 센서가 측정하는 압력 값은 상승합니다. (대기압에 가까워짐)</td>
+                    <td>엔진 흡기 매니폴드 내의 진공(음압)이 정상보다 약해졌음을 의미합니다. 진공이 약해지면 MAP 센서가 측정하는 압력 값은 상승합니다. (대기압에 가까워짐)</td>
                 </tr>
             </tbody>
         </table>
         <div class="scenario-description">
             <h3>진단 및 추가 확인 사항</h3>
-            <p>이러한 PID 값들의 변화는 흡기 시스템 어딘가에서 측정되지 않은 공기(도둑 공기)가 유입되고 있음을 강력하게 시사합니다. 이로 인해 PCM은 연료를 과도하게 보정하려고 시도하며, 공회전이 불안정해지거나 RPM이 상승할 수 있습니다. 흡기 매니폴드 압력(MAP) 센서 값의 상승과 높은 연료 보정 값(SHRTFT, LONGFT)이 주요 단서입니다. 흡기 매니폴드 개스킷, 진공 호스, 스로틀 바디 연결부 등의 누설 여부를 점검해야 합니다.</p>
+            <p>위 PID 값들의 변화는 엔진 작동에 영향을 미치는 특정 문제를 시사합니다. 특히 연료 보정 값들과 흡기 매니폴드 압력 값의 변화에 주목하여 원인을 추론해 볼 수 있습니다. 정확한 진단을 위해서는 관련 시스템의 추가적인 점검이 필요할 수 있습니다.</p>
         </div>
 
         <div class="quiz-section">
-            <h3>문제: 위 PID 데이터를 바탕으로 이 차량의 가장 유력한 문제점은 무엇일까요?</h3>
+            <h3>문제: 위 PID 데이터와 고객 요청 사항을 바탕으로 이 차량의 가장 유력한 문제점은 무엇일까요?</h3>
             <div class="quiz-options" id="quizOptions">
                 <label><input type="radio" name="diagnosis" value="a"> A. 연료 필터 막힘</label>
                 <label><input type="radio" name="diagnosis" value="b"> B. 점화 코일 불량</label>
@@ -207,26 +217,23 @@
 
         submitButton.addEventListener('click', () => {
             const selectedOption = quizOptions.querySelector('input[name="diagnosis"]:checked');
-            feedbackMessage.style.display = 'none'; // 이전 메시지 숨기기
+            feedbackMessage.style.display = 'none'; 
 
             if (!selectedOption) {
                 feedbackMessage.textContent = "보기를 선택해주세요!";
-                feedbackMessage.className = 'feedback incorrect'; // '보기를 선택해주세요'는 오류 스타일 유지
+                feedbackMessage.className = 'feedback incorrect'; 
                 feedbackMessage.style.display = 'block';
                 return;
             }
             
-            // 답변을 선택한 경우, 정답 여부를 알려주지 않고 중립적인 메시지 표시
             feedbackMessage.textContent = "답변을 제출했습니다. 스스로 정답을 확인해보세요!";
-            feedbackMessage.className = 'feedback neutral'; // 중립적인 스타일 적용
+            feedbackMessage.className = 'feedback neutral'; 
             feedbackMessage.style.display = 'block';
-
-            // 실제 정답 확인 로직은 여기서 실행하지 않음 (비공개 처리)
-            // const userAnswer = selectedOption.value;
-            // const correctAnswer = 'c'; 
-            // if (userAnswer === correctAnswer) { ... } else { ... }
         });
     </script>
+
+</body>
+</html>
 
 </body>
 </html>
