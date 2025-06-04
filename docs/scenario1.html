@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>엔진 진단 가상 시나리오 1 </title>
+    <title>엔진 진단 퀴즈: 흡기 누설</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -11,20 +11,28 @@
             background-color: #f8fafc; /* bg-slate-50 */
             color: #334155; /* text-slate-700 */
             padding: 2rem;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         h1, h2, h3 {
             color: #0f769e; /* text-sky-700 variant */
             margin-bottom: 1rem;
         }
         h1 { font-size: 2.25rem; font-weight: bold; text-align: center; }
-        h2 { font-size: 1.875rem; font-weight: bold; margin-top: 2rem; }
+        h2 { font-size: 1.875rem; font-weight: bold; margin-top: 2.5rem; }
         h3 { font-size: 1.5rem; font-weight: bold; }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            background-color: white;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
         th, td {
             border: 1px solid #e2e8f0; /* border-slate-200 */
@@ -40,143 +48,195 @@
             font-weight: bold;
             color: #dc2626; /* text-red-600 */
         }
-        .scenario-description {
+        .scenario-description, .quiz-section {
             background-color: #f0f9ff; /* bg-sky-50 */
             border: 1px solid #bae6fd; /* border-sky-200 */
-            padding: 1rem;
+            padding: 1.5rem;
             border-radius: 0.5rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             font-size: 0.9rem;
             color: #374151; /* text-gray-700 */
+        }
+        .quiz-section h3 {
+            color: #0369a1; /* text-sky-700 */
+            margin-bottom: 1rem;
+        }
+        .quiz-options label {
+            display: block;
+            background-color: white;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .quiz-options label:hover {
+            background-color: #f1f5f9;
+        }
+        .quiz-options input[type="radio"] {
+            margin-right: 0.5rem;
+        }
+        .submit-button {
+            display: inline-block;
+            background-color: #0ea5e9; /* bg-sky-500 */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 1rem;
+        }
+        .submit-button:hover {
+            background-color: #0284c7; /* bg-sky-600 */
+        }
+        .feedback {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+        }
+        .feedback.correct {
+            background-color: #d1fae5; /* bg-green-100 */
+            color: #065f46; /* text-green-700 */
+            border: 1px solid #a7f3d0; /* border-green-300 */
+        }
+        .feedback.incorrect {
+            background-color: #fee2e2; /* bg-red-100 */
+            color: #991b1b; /* text-red-700 */
+            border: 1px solid #fecaca; /* border-red-300 */
         }
     </style>
 </head>
 <body>
-    <h1>엔진 진단 가상 시나리오</h1>
+    <div class="container">
+        <h1>엔진 진단 퀴즈</h1>
 
-    <h2>시나리오 2: 흡기 시스템 미세 누설 (진공 누설)</h2>
-    <div class="scenario-description">
-        <h3>시나리오 개요</h3>
-        <p>차량은 정상 작동 온도로 예열된 후 공회전 상태입니다. 이때 흡기 시스템(예: 흡기 매니폴드, 진공 호스 등 공기량 센서 이후 부분) 어딘가에서 미세하게 공기가 새어 들어오고 있다고 가정합니다.</p>
+        <h2>시나리오: 흡기 시스템 미세 누설 (진공 누설)</h2>
+        <div class="scenario-description">
+            <h3>시나리오 개요</h3>
+            <p>차량은 정상 작동 온도로 예열된 후 공회전 상태입니다. 이때 흡기 시스템(예: 흡기 매니폴드, 진공 호스 등 공기량 센서 이후 부분) 어딘가에서 미세하게 공기가 새어 들어오고 있다고 가정합니다.</p>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>PID 항목</th>
+                    <th>측정 단위</th>
+                    <th>정상 공회전 상태 (예시 값)</th>
+                    <th>흡기 누설 발생 시 (공회전) (예시 값)</th>
+                    <th>값의 변화 및 의미</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>엔진 회전수 (RPM)</strong></td>
+                    <td>RPM</td>
+                    <td>750</td>
+                    <td>800 (약간 높거나 불안정)</td>
+                    <td>PCM이 희박한 혼합비를 보상하려 하거나, 불안정한 연소로 인해 공회전 RPM을 목표치로 유지하기 어려워져 약간 상승하거나 불안정해질 수 있습니다.</td>
+                </tr>
+                <tr>
+                    <td><strong>엔진 부하 (LOAD_ABSL)</strong></td>
+                    <td>%</td>
+                    <td>20</td>
+                    <td>18 (실제 부하보다 낮게 계산될 수 있음)</td>
+                    <td>측정되지 않은 공기(도둑 공기)가 유입되면, MAF 센서가 실제보다 적은 공기량을 감지할 수 있습니다. PCM은 이를 기준으로 부하를 계산하므로, 실제 엔진이 겪는 부하보다 낮게 표시될 수 있습니다.</td>
+                </tr>
+                <tr>
+                    <td><strong>단기 연료 보정 (SHRTFT1)</strong></td>
+                    <td>%</td>
+                    <td>-2 ~ +2 (안정적)</td>
+                    <td class="highlight">+15 ~ +25 (높게 유지)</td>
+                    <td class="highlight"><strong>핵심 증상!</strong> 측정되지 않은 공기가 유입되어 연료-공기 혼합비가 희박해집니다. 산소 센서가 이를 감지하고 PCM은 연료를 더 많이 분사하도록 명령하여 이 값이 크게 상승합니다.</td>
+                </tr>
+                <tr>
+                    <td><strong>장기 연료 보정 (LONGFT1)</strong></td>
+                    <td>%</td>
+                    <td>1</td>
+                    <td class="highlight">+10 (높게 학습됨)</td>
+                    <td class="highlight">단기 연료 보정만으로 희박 상태가 계속되면, PCM은 장기적으로 연료를 더 많이 공급하도록 학습합니다. 이 값이 높다는 것은 지속적인 희박 상태가 있었음을 의미합니다.</td>
+                </tr>
+                <tr>
+                    <td><strong>점화 시기 (SPARKADV)</strong></td>
+                    <td>도 (Degrees)</td>
+                    <td>10</td>
+                    <td>8 (약간 변동 또는 지각)</td>
+                    <td>희박한 혼합비는 연소 속도를 늦추거나 불안정하게 만들 수 있습니다. PCM은 최적의 연소를 위해 또는 노킹 방지를 위해 점화 시기를 약간 늦출(지각) 수 있습니다.</td>
+                </tr>
+                <tr>
+                    <td><strong>산소 센서 값 (O2S11 또는 EQ_RAT11)</strong></td>
+                    <td>전압(V) 또는 비율</td>
+                    <td>0.1~0.9V (정상 전환) 또는 약 1.0</td>
+                    <td>0.1~0.9V (정상 전환 - 연료보정 후)</td>
+                    <td class="highlight"><strong>초기에는 희박 상태 (예: 0.1V 부근 지속 또는 EQ_RAT > 1.0)를 보이다가, PCM이 연료 보정(SHRTFT, LONGFT 상승)을 통해 연료를 충분히 추가하면 다시 정상적으로 전환될 수 있습니다.</strong> 하지만 보정값이 매우 높게 유지됩니다.</td>
+                </tr>
+                <tr>
+                    <td><strong>흡기 매니폴드 압력 (MAP)</strong></td>
+                    <td>kPa</td>
+                    <td>30 (높은 진공)</td>
+                    <td class="highlight">40 (낮은 진공, 즉 압력 상승)</td>
+                    <td class="highlight"><strong>핵심 증상!</strong> 흡기 시스템에 누설이 생기면, 엔진이 빨아들이는 공기 통로에 구멍이 생긴 것과 같아서 매니폴드 내의 진공(음압)이 약해집니다. 진공이 약해지면 MAP 센서가 측정하는 압력 값은 상승합니다. (대기압에 가까워짐)</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="scenario-description">
+            <h3>진단 및 추가 확인 사항</h3>
+            <p>이러한 PID 값들의 변화는 흡기 시스템 어딘가에서 측정되지 않은 공기(도둑 공기)가 유입되고 있음을 강력하게 시사합니다. 이로 인해 PCM은 연료를 과도하게 보정하려고 시도하며, 공회전이 불안정해지거나 RPM이 상승할 수 있습니다. 흡기 매니폴드 압력(MAP) 센서 값의 상승과 높은 연료 보정 값(SHRTFT, LONGFT)이 주요 단서입니다. 흡기 매니폴드 개스킷, 진공 호스, 스로틀 바디 연결부 등의 누설 여부를 점검해야 합니다.</p>
+        </div>
+
+        <div class="quiz-section">
+            <h3>문제: 위 PID 데이터를 바탕으로 이 차량의 가장 유력한 문제점은 무엇일까요?</h3>
+            <div class="quiz-options" id="quizOptions">
+                <label><input type="radio" name="diagnosis" value="a"> A. 연료 필터 막힘</label>
+                <label><input type="radio" name="diagnosis" value="b"> B. 점화 코일 불량</label>
+                <label><input type="radio" name="diagnosis" value="c"> C. 흡기 시스템 진공 누설</label>
+                <label><input type="radio" name="diagnosis" value="d"> D. 배기 시스템 막힘</label>
+                <label><input type="radio" name="diagnosis" value="e"> E. 연료 펌프 고장</label>
+            </div>
+            <button class="submit-button" id="submitAnswer">정답 확인</button>
+            <div class="feedback" id="feedbackMessage" style="display: none;"></div>
+        </div>
     </div>
-    <table>
-        <thead>
-            <tr>
-                <th>PID 항목</th>
-                <th>측정 단위</th>
-                <th>정상 공회전 상태 (예시 값)</th>
-                <th>흡기 누설 발생 시 (공회전) (예시 값)</th>
-                <th>값의 변화 및 의미</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><strong>엔진 회전수 (RPM)</strong></td>
-                <td>RPM</td>
-                <td>750</td>
-                <td>800 (약간 높거나 불안정)</td>
-                <td>PCM이 희박한 혼합비를 보상하려 하거나, 불안정한 연소로 인해 공회전 RPM을 목표치로 유지하기 어려워져 약간 상승하거나 불안정해질 수 있습니다.</td>
-            </tr>
-            <tr>
-                <td><strong>엔진 부하 (LOAD_ABSL)</strong></td>
-                <td>%</td>
-                <td>20</td>
-                <td>18 (실제 부하보다 낮게 계산될 수 있음)</td>
-                <td>측정되지 않은 공기(도둑 공기)가 유입되면, MAF 센서가 실제보다 적은 공기량을 감지할 수 있습니다. PCM은 이를 기준으로 부하를 계산하므로, 실제 엔진이 겪는 부하보다 낮게 표시될 수 있습니다.</td>
-            </tr>
-            <tr>
-                <td><strong>단기 연료 보정 (SHRTFT1)</strong></td>
-                <td>%</td>
-                <td>-2 ~ +2 (안정적)</td>
-                <td class="highlight">+15 ~ +25 (높게 유지)</td>
-                <td class="highlight"><strong>핵심 증상!</strong> 측정되지 않은 공기가 유입되어 연료-공기 혼합비가 희박해집니다. 산소 센서가 이를 감지하고 PCM은 연료를 더 많이 분사하도록 명령하여 이 값이 크게 상승합니다.</td>
-            </tr>
-            <tr>
-                <td><strong>장기 연료 보정 (LONGFT1)</strong></td>
-                <td>%</td>
-                <td>1</td>
-                <td class="highlight">+10 (높게 학습됨)</td>
-                <td class="highlight">단기 연료 보정만으로 희박 상태가 계속되면, PCM은 장기적으로 연료를 더 많이 공급하도록 학습합니다. 이 값이 높다는 것은 지속적인 희박 상태가 있었음을 의미합니다.</td>
-            </tr>
-            <tr>
-                <td><strong>점화 시기 (SPARKADV)</strong></td>
-                <td>도 (Degrees)</td>
-                <td>10</td>
-                <td>8 (약간 변동 또는 지각)</td>
-                <td>희박한 혼합비는 연소 속도를 늦추거나 불안정하게 만들 수 있습니다. PCM은 최적의 연소를 위해 또는 노킹 방지를 위해 점화 시기를 약간 늦출(지각) 수 있습니다.</td>
-            </tr>
-            <tr>
-                <td><strong>1번 실린더 가속도 (CYL1_ACCL)</strong></td>
-                <td>수치</td>
-                <td>0.5</td>
-                <td>0.4 (모든 실린더 약간 저하/불안정)</td>
-                <td>희박한 혼합비로 인해 모든 실린더의 연소가 최적이 아니게 되어, 각 실린더의 폭발력이 약간씩 약해지거나 연소가 불안정해져 가속도 값이 전반적으로 낮아지거나 흔들릴 수 있습니다.</td>
-            </tr>
-            <tr>
-                <td><strong>2번 실린더 가속도 (CYL2_ACCL)</strong></td>
-                <td>수치</td>
-                <td>0.5</td>
-                <td>0.4 (모든 실린더 약간 저하/불안정)</td>
-                <td>위와 동일합니다.</td>
-            </tr>
-            <tr>
-                <td><strong>3번 실린더 가속도 (CYL3_ACCL)</strong></td>
-                <td>수치</td>
-                <td>0.5</td>
-                <td>0.4 (모든 실린더 약간 저하/불안정)</td>
-                <td>위와 동일합니다.</td>
-            </tr>
-            <tr>
-                <td><strong>4번 실린더 가속도 (CYL4_ACCL)</strong></td>
-                <td>수치</td>
-                <td>0.5</td>
-                <td>0.4 (모든 실린더 약간 저하/불안정)</td>
-                <td>위와 동일합니다.</td>
-            </tr>
-            <tr>
-                <td><strong>차량 속도 (VSS)</strong></td>
-                <td>km/h</td>
-                <td>0</td>
-                <td>0</td>
-                <td>공회전 상태이므로 변화 없습니다.</td>
-            </tr>
-            <tr>
-                <td><strong>액셀 페달 위치 (APP)</strong></td>
-                <td>%</td>
-                <td>0</td>
-                <td>0</td>
-                <td>공회전 상태이므로 변화 없습니다.</td>
-            </tr>
-            <tr>
-                <td><strong>산소 센서 값 (O2S11 또는 EQ_RAT11)</strong></td>
-                <td>전압(V) 또는 비율</td>
-                <td>0.1~0.9V (정상 전환) 또는 약 1.0</td>
-                <td>0.1~0.9V (정상 전환 - 연료보정 후)</td>
-                <td class="highlight"><strong>초기에는 희박 상태 (예: 0.1V 부근 지속 또는 EQ_RAT > 1.0)를 보이다가, PCM이 연료 보정(SHRTFT, LONGFT 상승)을 통해 연료를 충분히 추가하면 다시 정상적으로 전환될 수 있습니다.</strong> 하지만 보정값이 매우 높게 유지됩니다.</td>
-            </tr>
-            <tr>
-                <td><strong>냉각수 온도 (ECT)</strong></td>
-                <td>°C</td>
-                <td>90</td>
-                <td>90</td>
-                <td>엔진은 정상 작동 온도입니다.</td>
-            </tr>
-            <tr>
-                <td><strong>흡기 매니폴드 압력 (MAP)</strong></td>
-                <td>kPa</td>
-                <td>30 (높은 진공)</td>
-                <td class="highlight">40 (낮은 진공, 즉 압력 상승)</td>
-                <td class="highlight"><strong>핵심 증상!</strong> 흡기 시스템에 누설이 생기면, 엔진이 빨아들이는 공기 통로에 구멍이 생긴 것과 같아서 매니폴드 내의 진공(음압)이 약해집니다. 진공이 약해지면 MAP 센서가 측정하는 압력 값은 상승합니다. (대기압에 가까워짐)</td>
-            </tr>
-        </tbody>
-    </table>
-    <div class="scenario-description">
-        <h3>진단 및 추가 확인 사항 (시나리오 2)</h3>
-        <p>이러한 PID 값들의 변화는 흡기 시스템 어딘가에서 측정되지 않은 공기(도둑 공기)가 유입되고 있음을 강력하게 시사합니다. 이로 인해 PCM은 연료를 과도하게 보정하려고 시도하며, 공회전이 불안정해지거나 RPM이 상승할 수 있습니다. 흡기 매니폴드 압력(MAP) 센서 값의 상승과 높은 연료 보정 값(SHRTFT, LONGFT)이 주요 단서입니다. 흡기 매니폴드 개스킷, 진공 호스, 스로틀 바디 연결부 등의 누설 여부를 점검해야 합니다.</p>
-    </div>
+
+    <script>
+        const submitButton = document.getElementById('submitAnswer');
+        const feedbackMessage = document.getElementById('feedbackMessage');
+        const quizOptions = document.getElementById('quizOptions');
+
+        submitButton.addEventListener('click', () => {
+            const selectedOption = quizOptions.querySelector('input[name="diagnosis"]:checked');
+            if (!selectedOption) {
+                feedbackMessage.textContent = "보기를 선택해주세요!";
+                feedbackMessage.className = 'feedback incorrect';
+                feedbackMessage.style.display = 'block';
+                return;
+            }
+
+            const userAnswer = selectedOption.value;
+            const correctAnswer = 'c'; // 흡기 시스템 진공 누설
+
+            if (userAnswer === correctAnswer) {
+                feedbackMessage.textContent = "정답입니다! PID 데이터를 정확히 분석하셨네요. 높은 연료 보정 값과 MAP 센서 값 상승이 핵심 단서였습니다.";
+                feedbackMessage.className = 'feedback correct';
+            } else {
+                let explanation = "오답입니다. 다시 한번 PID 데이터를 살펴보세요. ";
+                if (userAnswer === 'a') explanation += "연료 필터가 막히면 연료 압력이 낮아지고, 연료 보정 값은 희박 상태를 보상하려 하겠지만 MAP 센서 값의 변화는 다를 수 있습니다.";
+                else if (userAnswer === 'b') explanation += "점화 코일 불량은 특정 실린더의 실화(Misfire)를 유발하고, CYL_ACCL 값에 뚜렷한 변화를 보입니다. 이 시나리오에서는 모든 실린더에 영향이 있습니다.";
+                else if (userAnswer === 'd') explanation += "배기 시스템이 막히면 엔진 출력이 전반적으로 저하되고, MAP 센서 값이 비정상적으로 높게 나타날 수 있지만 연료 보정 패턴이 다를 수 있습니다.";
+                else if (userAnswer === 'e') explanation += "연료 펌프가 고장나면 연료 압력이 낮아지고, 엔진이 힘이 없거나 시동이 걸리지 않을 수 있으며, 연료 보정 값은 희박을 나타낼 수 있지만 MAP 센서 값 변화와는 다릅니다.";
+                else explanation += "핵심은 측정되지 않은 공기 유입으로 인한 PCM의 연료 보정 노력과 흡기 매니폴드 압력 변화입니다.";
+                feedbackMessage.textContent = explanation;
+                feedbackMessage.className = 'feedback incorrect';
+            }
+            feedbackMessage.style.display = 'block';
+        });
+    </script>
 
 </body>
 </html>
+
 
 </body>
 </html>
