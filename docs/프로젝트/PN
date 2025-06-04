@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이미지 검색 도우미</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font (optional, using system fonts as fallback) */
+        body {
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        }
+        /* Style for active tab */
+        .tab-active {
+            background-color: #3B82F6; /* blue-500 */
+            color: white;
+        }
+        .tab-inactive {
+            background-color: #E5E7EB; /* gray-200 */
+            color: #374151; /* gray-700 */
+        }
+        /* Basic transition for smoother UI changes */
+        .tab-content {
+            transition: opacity 0.3s ease-in-out;
+        }
+        .hidden-content {
+            display: none;
+            opacity: 0;
+        }
+        .visible-content {
+            display: block;
+            opacity: 1;
+        }
+        /* Custom styles for file input button */
+        .file-input-button {
+            background-color: #4F46E5; /* indigo-600 */
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem; /* rounded-md */
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .file-input-button:hover {
+            background-color: #4338CA; /* indigo-700 */
+        }
+        /* Error message styling */
+        #messageArea {
+            min-height: 1.5rem; /* Reserve space for messages */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-lg">
+        <header class="mb-6 text-center">
+            <h1 class="text-2xl sm:text-3xl font-bold text-gray-800">🖼️ 이미지 검색 도우미</h1>
+            <p class="text-gray-600 mt-1">URL 또는 파일 업로드를 통해 이미지를 검색하세요.</p>
+        </header>
+
+        <!-- Tab Navigation -->
+        <div class="flex border-b border-gray-300 mb-6 rounded-md overflow-hidden">
+            <button id="tabUrl" class="flex-1 py-3 px-4 font-semibold focus:outline-none tab-active">
+                URL로 검색
+            </button>
+            <button id="tabUpload" class="flex-1 py-3 px-4 font-semibold focus:outline-none tab-inactive">
+                파일 업로드로 검색
+            </button>
+        </div>
+
+        <!-- Tab Content -->
+        <div id="contentUrl" class="tab-content visible-content">
+            <div class="space-y-4">
+                <div>
+                    <label for="imageUrl" class="block text-sm font-medium text-gray-700 mb-1">이미지 URL:</label>
+                    <input type="url" id="imageUrl" name="imageUrl" placeholder="https://example.com/image.jpg"
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                </div>
+                <button id="searchByUrlButton"
+                        class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition duration-150 ease-in-out transform hover:-translate-y-0.5">
+                    URL로 검색하기
+                </button>
+            </div>
+        </div>
+
+        <div id="contentUpload" class="tab-content hidden-content">
+            <div class="space-y-4">
+                <div>
+                    <label for="imageFile" class="block text-sm font-medium text-gray-700 mb-2">이미지 파일 선택:</label>
+                    <input type="file" id="imageFile" name="imageFile" accept="image/*" class="block w-full text-sm text-gray-500
+                        file:mr-4 file:py-2 file:px-4
+                        file:rounded-lg file:border-0
+                        file:text-sm file:font-semibold
+                        file:bg-blue-50 file:text-blue-700
+                        hover:file:bg-blue-100 cursor-pointer">
+                </div>
+                <div id="imagePreviewContainer" class="mt-4 hidden">
+                    <p class="text-sm font-medium text-gray-700 mb-1">미리보기:</p>
+                    <img id="imagePreview" src="#" alt="Image preview" class="max-w-full h-auto max-h-60 mx-auto rounded-lg border border-gray-300 shadow-sm"/>
+                </div>
+                <button id="searchByFileButton"
+                        class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition duration-150 ease-in-out transform hover:-translate-y-0.5 mt-2"
+                        disabled> <!-- Initially disabled -->
+                    파일로 검색하기
+                </button>
+            </div>
+        </div>
+
+        <!-- Message Area -->
+        <div id="messageArea" class="mt-4 text-center text-sm text-red-500 font-medium"></div>
+
+        <footer class="mt-8 text-center text-xs text-gray-500">
+            <p>&copy; <span id="currentYear"></span> 이미지 검색 도우미. Google 이미지를 사용하여 검색합니다.</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabUrl = document.getElementById('tabUrl');
+            const tabUpload = document.getElementById('tabUpload');
+            const contentUrl = document.getElementById('contentUrl');
+            const contentUpload = document.getElementById('contentUpload');
+
+            const imageUrlInput = document.getElementById('imageUrl');
+            const imageFileInput = document.getElementById('imageFile');
+            const imagePreview = document.getElementById('imagePreview');
+            const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+            
+            const searchByUrlButton = document.getElementById('searchByUrlButton');
+            const searchByFileButton = document.getElementById('searchByFileButton');
+            const messageArea = document.getElementById('messageArea');
+
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+            let uploadedImageDataUrl = null;
+
+            // Tab switching logic
+            tabUrl.addEventListener('click', () => {
+                contentUrl.classList.remove('hidden-content');
+                contentUrl.classList.add('visible-content');
+                contentUpload.classList.add('hidden-content');
+                contentUpload.classList.remove('visible-content');
+
+                tabUrl.classList.add('tab-active');
+                tabUrl.classList.remove('tab-inactive');
+                tabUpload.classList.add('tab-inactive');
+                tabUpload.classList.remove('tab-active');
+                messageArea.textContent = ''; // Clear messages
+            });
+
+            tabUpload.addEventListener('click', () => {
+                contentUpload.classList.remove('hidden-content');
+                contentUpload.classList.add('visible-content');
+                contentUrl.classList.add('hidden-content');
+                contentUrl.classList.remove('visible-content');
+                
+                tabUpload.classList.add('tab-active');
+                tabUpload.classList.remove('tab-inactive');
+                tabUrl.classList.add('tab-inactive');
+                tabUrl.classList.remove('tab-active');
+                messageArea.textContent = ''; // Clear messages
+            });
+
+            // Image file preview logic
+            imageFileInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                        messageArea.textContent = '파일 크기는 5MB를 초과할 수 없습니다.';
+                        imagePreviewContainer.classList.add('hidden');
+                        uploadedImageDataUrl = null;
+                        searchByFileButton.disabled = true;
+                        imageFileInput.value = ''; // Reset file input
+                        return;
+                    }
+                    
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        imagePreview.src = e.target.result;
+                        uploadedImageDataUrl = e.target.result;
+                        imagePreviewContainer.classList.remove('hidden');
+                        searchByFileButton.disabled = false; // Enable search button
+                        messageArea.textContent = ''; // Clear any previous error
+                    }
+                    reader.onerror = () => {
+                        messageArea.textContent = '파일을 읽는 중 오류가 발생했습니다.';
+                        uploadedImageDataUrl = null;
+                        searchByFileButton.disabled = true;
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    imagePreviewContainer.classList.add('hidden');
+                    uploadedImageDataUrl = null;
+                    searchByFileButton.disabled = true;
+                }
+            });
+
+            // Search by URL logic
+            searchByUrlButton.addEventListener('click', () => {
+                const imageUrl = imageUrlInput.value.trim();
+                if (imageUrl) {
+                    try {
+                        // Basic URL validation
+                        new URL(imageUrl);
+                        const searchUrl = `https://images.google.com/searchbyimage?image_url=${encodeURIComponent(imageUrl)}`;
+                        window.open(searchUrl, '_blank');
+                        messageArea.textContent = '';
+                    } catch (error) {
+                        messageArea.textContent = '유효한 URL을 입력해주세요. (예: http://... 또는 https://...)';
+                    }
+                } else {
+                    messageArea.textContent = '이미지 URL을 입력해주세요.';
+                }
+            });
+
+            // Search by File logic
+            searchByFileButton.addEventListener('click', () => {
+                if (uploadedImageDataUrl) {
+                    // For very long data URLs, this might sometimes fail or be too slow,
+                    // but it's the standard way for client-side reverse image search via URL parameter.
+                    // Google's own upload is more robust as it handles the file directly.
+                    const searchUrl = `https://images.google.com/searchbyimage?image_url=${encodeURIComponent(uploadedImageDataUrl)}`;
+                    try {
+                        window.open(searchUrl, '_blank');
+                        messageArea.textContent = '';
+                    } catch (e) {
+                        // This catch might be for window.open issues (e.g. popup blocker)
+                        // but the length of Data URI could also be an issue for some browsers/servers.
+                        messageArea.textContent = '검색 창을 여는 데 실패했습니다. 팝업 차단기를 확인하거나 이미지 크기를 줄여보세요.';
+                         // A more robust solution for large files would involve uploading to a server
+                         // that then performs the Google search, but that's beyond client-side capabilities.
+                    }
+                } else {
+                    messageArea.textContent = '먼저 이미지 파일을 선택해주세요.';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
