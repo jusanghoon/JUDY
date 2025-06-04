@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>엔진 진단 가상 시나리오</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f8fafc; /* bg-slate-50 */
+            color: #334155; /* text-slate-700 */
+            padding: 2rem;
+        }
+        h1, h2, h3 {
+            color: #0f769e; /* text-sky-700 variant */
+            margin-bottom: 1rem;
+        }
+        h1 { font-size: 2.25rem; font-weight: bold; text-align: center; }
+        h2 { font-size: 1.875rem; font-weight: bold; margin-top: 2rem; }
+        h3 { font-size: 1.5rem; font-weight: bold; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background-color: white;
+        }
+        th, td {
+            border: 1px solid #e2e8f0; /* border-slate-200 */
+            padding: 0.75rem;
+            text-align: left;
+            font-size: 0.875rem;
+        }
+        th {
+            background-color: #f1f5f9; /* bg-slate-100 */
+            font-weight: 600;
+        }
+        td.highlight {
+            font-weight: bold;
+            color: #dc2626; /* text-red-600 */
+        }
+        .scenario-description {
+            background-color: #f0f9ff; /* bg-sky-50 */
+            border: 1px solid #bae6fd; /* border-sky-200 */
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #374151; /* text-gray-700 */
+        }
+    </style>
+</head>
+<body>
+    <h1>엔진 진단 가상 시나리오</h1>
+
+    <h2>시나리오 1: 3번 실린더 간헐적 실화</h2>
+    <div class="scenario-description">
+        <h3>시나리오 개요</h3>
+        <p>차량은 시속 약 60km로 정속 주행 중이며, 엔진은 정상 작동 온도에 도달한 상태입니다. 이때 간헐적으로 3번 실린더에서 미세한 실화(Misfire, 점화 불량 또는 연소 불량)가 발생한다고 가정합니다.</p>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>PID 항목</th>
+                <th>측정 단위</th>
+                <th>정상 주행 상태 (예시 값)</th>
+                <th>3번 실린더 간헐적 실화 발생 시 (예시 값)</th>
+                <th>값의 변화 및 의미</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>엔진 회전수 (RPM)</strong></td>
+                <td>RPM</td>
+                <td>2000</td>
+                <td class="highlight">1900 (상당히 변동 및 저하)</td>
+                <td>실화로 인해 순간적으로 회전이 부드럽지 못하고 RPM이 눈에 띄게 떨어지거나 불안정해질 수 있습니다.</td>
+            </tr>
+            <tr>
+                <td><strong>엔진 부하 (LOAD_ABSL)</strong></td>
+                <td>%</td>
+                <td>35</td>
+                <td>37 (상승 시도)</td>
+                <td>PCM은 출력이 부족하다고 느껴 부하 값을 더 높여 다른 실린더들이 더 일하도록 유도할 수 있습니다.</td>
+            </tr>
+            <tr>
+                <td><strong>단기 연료 보정 (SHRTFT1)</strong></td>
+                <td>%</td>
+                <td>-2 ~ +2 (안정적)</td>
+                <td class="highlight">+8 ~ +18 (더욱 급격히 상승 시도)</td>
+                <td>3번 실린더에서 연료가 제대로 타지 못하면 배기가스 내 산소 농도가 높아집니다. 산소 센서가 이를 감지하고 PCM은 연료를 더 넣으려고(희박하다고 판단) 보정 값을 올립니다.</td>
+            </tr>
+            <tr>
+                <td><strong>장기 연료 보정 (LONGFT1)</strong></td>
+                <td>%</td>
+                <td>1</td>
+                <td>1 (아직 큰 변화 없음)</td>
+                <td>간헐적이고 미세한 실화라면 장기 보정 값에는 아직 큰 영향을 주지 않을 수 있습니다. 문제가 지속되면 이 값도 변하게 됩니다.</td>
+            </tr>
+            <tr>
+                <td><strong>점화 시기 (SPARKADV)</strong></td>
+                <td>도 (Degrees)</td>
+                <td>25</td>
+                <td>22 (더욱 변동 또는 지각 시도)</td>
+                <td>불안정한 연소를 감지하면 PCM이 노킹 방지 등을 위해 점화 시기를 더 늦출(지각) 수 있습니다.</td>
+            </tr>
+            <tr>
+                <td><strong>1번 실린더 가속도 (CYL1_ACCL)</strong></td>
+                <td>수치</td>
+                <td>0.8</td>
+                <td>0.9 (더욱 일함)</td>
+                <td>3번 실린더가 일을 덜하니, 다른 실린더들이 더 힘을 내려고 할 수 있습니다.</td>
+            </tr>
+            <tr>
+                <td><strong>2번 실린더 가속도 (CYL2_ACCL)</strong></td>
+                <td>수치</td>
+                <td>0.8</td>
+                <td>0.9 (더욱 일함)</td>
+                <td>위와 동일합니다.</td>
+            </tr>
+            <tr>
+                <td><strong>3번 실린더 가속도 (CYL3_ACCL)</strong></td>
+                <td>수치</td>
+                <td>0.8</td>
+                <td class="highlight">-0.8 (매우 현저히 낮아짐 또는 음수)</td>
+                <td class="highlight"><strong>가장 중요한 변화!</strong> 3번 실린더에서 폭발이 제대로 안되니 크랭크축 회전에 기여하지 못하고 오히려 저항으로 작용하여 음수 값까지 보일 수 있습니다.</td>
+            </tr>
+            <tr>
+                <td><strong>4번 실린더 가속도 (CYL4_ACCL)</strong></td>
+                <td>수치</td>
+                <td>0.8</td>
+                <td>0.9 (더욱 일함)</td>
+                <td>위와 동일합니다.</td>
+            </tr>
+            <tr>
+                <td><strong>크루즈 컨트롤 상태</strong></td>
+                <td>켜짐/꺼짐</td>
+                <td>켜짐 (예시)</td>
+                <td>켜짐 (예시)</td>
+                <td>크루즈 컨트롤 상태에서는 PCM이 일정한 속도를 유지하려고 더 적극적으로 엔진을 제어합니다.</td>
+            </tr>
+            <tr>
+                <td><strong>차량 속도 (VSS)</strong></td>
+                <td>km/h</td>
+                <td>60</td>
+                <td>58 (변동 및 저하 가능)</td>
+                <td>엔진 출력이 순간적으로 부족해지면 속도 유지에 어려움이 있을 수 있습니다.</td>
+            </tr>
+            <tr>
+                <td><strong>액셀 페달 위치 (APP)</strong></td>
+                <td>%</td>
+                <td>20</td>
+                <td>20 (변화 없음)</td>
+                <td>운전자는 동일하게 페달을 밟고 있지만, 차는 문제를 겪고 있는 상황입니다.</td>
+            </tr>
+            <tr>
+                <td><strong>산소 센서 값 (O2S11 또는 EQ_RAT11)</strong></td>
+                <td>전압(V) 또는 비율</td>
+                <td>0.1~0.9V (빠르게 전환) 또는 약 1.0 (이론공연비)</td>
+                <td class="highlight">0.1V 부근에 더 오래 머무르거나(희박), 비율이 1.0보다 더 커짐</td>
+                <td>3번 실린더에서 연료가 안 타면 배기가스에 안 탄 산소가 많이 섞여 나옵니다. 산소 센서는 이를 "희박하다"고 감지합니다. (EQ_RAT은 공연비를 나타내며, 1.0이 이론공연비)</td>
+            </tr>
+            <tr>
+                <td><strong>냉각수 온도 (ECT)</strong></td>
+                <td>°C</td>
+                <td>90</td>
+                <td>90</td>
+                <td>엔진은 정상 작동 온도입니다.</td>
+            </tr>
+            <tr>
+                <td><strong>흡기 매니폴드 압력 (MAP)</strong></td>
+                <td>kPa</td>
+                <td>40</td>
+                <td>42 (상승 가능)</td>
+                <td>엔진 회전이 불안정해지고 출력이 부족하면 흡기 매니폴드의 진공이 약해져 MAP 값이 상승할 수 있습니다.</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="scenario-description">
+        <h3>진단 및 추가 확인 사항 (시나리오 1)</h3>
+        <p>이런 PID 값들의 변화를 종합적으로 보면, "아, 3번 실린더에서 뭔가 문제가 있어서 제대로 일을 못 하고 있고, 그래서 PCM이 연료를 더 넣으려고 애쓰고 있구나!" 하고 진단할 수 있습니다. 실화의 원인은 점화 계통, 연료 계통, 또는 기계적인 문제 등 다양할 수 있으므로 추가적인 점검(점화 플러그, 코일, 인젝터, 압축 압력 등)이 필요합니다.</p>
+    </div>
+
+    <h2>시나리오 2: 흡기 시스템 미세 누설 (진공 누설)</h2>
+    <div class="scenario-description">
+        <h3>시나리오 개요</h3>
+        <p>차량은 정상 작동 온도로 예열된 후 공회전 상태입니다. 이때 흡기 시스템(예: 흡기 매니폴드, 진공 호스 등 공기량 센서 이후 부분) 어딘가에서 미세하게 공기가 새어 들어오고 있다고 가정합니다.</p>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>PID 항목</th>
+                <th>측정 단위</th>
+                <th>정상 공회전 상태 (예시 값)</th>
+                <th>흡기 누설 발생 시 (공회전) (예시 값)</th>
+                <th>값의 변화 및 의미</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>엔진 회전수 (RPM)</strong></td>
+                <td>RPM</td>
+                <td>750</td>
+                <td>800 (약간 높거나 불안정)</td>
+                <td>PCM이 희박한 혼합비를 보상하려 하거나, 불안정한 연소로 인해 공회전 RPM을 목표치로 유지하기 어려워져 약간 상승하거나 불안정해질 수 있습니다.</td>
+            </tr>
+            <tr>
+                <td><strong>엔진 부하 (LOAD_ABSL)</strong></td>
+                <td>%</td>
+                <td>20</td>
+                <td>18 (실제 부하보다 낮게 계산될 수 있음)</td>
+                <td>측정되지 않은 공기(도둑 공기)가 유입되면, MAF 센서가 실제보다 적은 공기량을 감지할 수 있습니다. PCM은 이를 기준으로 부하를 계산하므로, 실제 엔진이 겪는 부하보다 낮게 표시될 수 있습니다.</td>
+            </tr>
+            <tr>
+                <td><strong>단기 연료 보정 (SHRTFT1)</strong></td>
+                <td>%</td>
+                <td>-2 ~ +2 (안정적)</td>
+                <td class="highlight">+15 ~ +25 (높게 유지)</td>
+                <td class="highlight"><strong>핵심 증상!</strong> 측정되지 않은 공기가 유입되어 연료-공기 혼합비가 희박해집니다. 산소 센서가 이를 감지하고 PCM은 연료를 더 많이 분사하도록 명령하여 이 값이 크게 상승합니다.</td>
+            </tr>
+            <tr>
+                <td><strong>장기 연료 보정 (LONGFT1)</strong></td>
+                <td>%</td>
+                <td>1</td>
+                <td class="highlight">+10 (높게 학습됨)</td>
+                <td class="highlight">단기 연료 보정만으로 희박 상태가 계속되면, PCM은 장기적으로 연료를 더 많이 공급하도록 학습합니다. 이 값이 높다는 것은 지속적인 희박 상태가 있었음을 의미합니다.</td>
+            </tr>
+            <tr>
+                <td><strong>점화 시기 (SPARKADV)</strong></td>
+                <td>도 (Degrees)</td>
+                <td>10</td>
+                <td>8 (약간 변동 또는 지각)</td>
+                <td>희박한 혼합비는 연소 속도를 늦추거나 불안정하게 만들 수 있습니다. PCM은 최적의 연소를 위해 또는 노킹 방지를 위해 점화 시기를 약간 늦출(지각) 수 있습니다.</td>
+            </tr>
+            <tr>
+                <td><strong>1번 실린더 가속도 (CYL1_ACCL)</strong></td>
+                <td>수치</td>
+                <td>0.5</td>
+                <td>0.4 (모든 실린더 약간 저하/불안정)</td>
+                <td>희박한 혼합비로 인해 모든 실린더의 연소가 최적이 아니게 되어, 각 실린더의 폭발력이 약간씩 약해지거나 연소가 불안정해져 가속도 값이 전반적으로 낮아지거나 흔들릴 수 있습니다.</td>
+            </tr>
+            <tr>
+                <td><strong>2번 실린더 가속도 (CYL2_ACCL)</strong></td>
+                <td>수치</td>
+                <td>0.5</td>
+                <td>0.4 (모든 실린더 약간 저하/불안정)</td>
+                <td>위와 동일합니다.</td>
+            </tr>
+            <tr>
+                <td><strong>3번 실린더 가속도 (CYL3_ACCL)</strong></td>
+                <td>수치</td>
+                <td>0.5</td>
+                <td>0.4 (모든 실린더 약간 저하/불안정)</td>
+                <td>위와 동일합니다.</td>
+            </tr>
+            <tr>
+                <td><strong>4번 실린더 가속도 (CYL4_ACCL)</strong></td>
+                <td>수치</td>
+                <td>0.5</td>
+                <td>0.4 (모든 실린더 약간 저하/불안정)</td>
+                <td>위와 동일합니다.</td>
+            </tr>
+            <tr>
+                <td><strong>차량 속도 (VSS)</strong></td>
+                <td>km/h</td>
+                <td>0</td>
+                <td>0</td>
+                <td>공회전 상태이므로 변화 없습니다.</td>
+            </tr>
+            <tr>
+                <td><strong>액셀 페달 위치 (APP)</strong></td>
+                <td>%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>공회전 상태이므로 변화 없습니다.</td>
+            </tr>
+            <tr>
+                <td><strong>산소 센서 값 (O2S11 또는 EQ_RAT11)</strong></td>
+                <td>전압(V) 또는 비율</td>
+                <td>0.1~0.9V (정상 전환) 또는 약 1.0</td>
+                <td>0.1~0.9V (정상 전환 - 연료보정 후)</td>
+                <td class="highlight"><strong>초기에는 희박 상태 (예: 0.1V 부근 지속 또는 EQ_RAT > 1.0)를 보이다가, PCM이 연료 보정(SHRTFT, LONGFT 상승)을 통해 연료를 충분히 추가하면 다시 정상적으로 전환될 수 있습니다.</strong> 하지만 보정값이 매우 높게 유지됩니다.</td>
+            </tr>
+            <tr>
+                <td><strong>냉각수 온도 (ECT)</strong></td>
+                <td>°C</td>
+                <td>90</td>
+                <td>90</td>
+                <td>엔진은 정상 작동 온도입니다.</td>
+            </tr>
+            <tr>
+                <td><strong>흡기 매니폴드 압력 (MAP)</strong></td>
+                <td>kPa</td>
+                <td>30 (높은 진공)</td>
+                <td class="highlight">40 (낮은 진공, 즉 압력 상승)</td>
+                <td class="highlight"><strong>핵심 증상!</strong> 흡기 시스템에 누설이 생기면, 엔진이 빨아들이는 공기 통로에 구멍이 생긴 것과 같아서 매니폴드 내의 진공(음압)이 약해집니다. 진공이 약해지면 MAP 센서가 측정하는 압력 값은 상승합니다. (대기압에 가까워짐)</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="scenario-description">
+        <h3>진단 및 추가 확인 사항 (시나리오 2)</h3>
+        <p>이러한 PID 값들의 변화는 흡기 시스템 어딘가에서 측정되지 않은 공기(도둑 공기)가 유입되고 있음을 강력하게 시사합니다. 이로 인해 PCM은 연료를 과도하게 보정하려고 시도하며, 공회전이 불안정해지거나 RPM이 상승할 수 있습니다. 흡기 매니폴드 압력(MAP) 센서 값의 상승과 높은 연료 보정 값(SHRTFT, LONGFT)이 주요 단서입니다. 흡기 매니폴드 개스킷, 진공 호스, 스로틀 바디 연결부 등의 누설 여부를 점검해야 합니다.</p>
+    </div>
+
+</body>
+</html>
