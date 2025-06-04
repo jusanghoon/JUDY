@@ -55,10 +55,17 @@
             font-weight: 600;
         }
         
-        th:nth-child(1), td:nth-child(1) { width: 28%; } /* PID 항목 */
-        th:nth-child(2), td:nth-child(2) { width: 12%; } /* 측정 단위 */
-        th:nth-child(3), td:nth-child(3) { width: 30%; } /* 정상 공회전 상태 */
-        th:nth-child(4), td:nth-child(4) { width: 30%; } /* 이상 데이터 관찰 시 */
+        th:nth-child(1), td:nth-child(1) { width: 35%; } /* PID 항목 (설명 추가로 너비 증가) */
+        th:nth-child(2), td:nth-child(2) { width: 10%; } /* 측정 단위 (너비 약간 감소) */
+        th:nth-child(3), td:nth-child(3) { width: 27.5%; } /* 정상 공회전 상태 */
+        th:nth-child(4), td:nth-child(4) { width: 27.5%; } /* 이상 데이터 관찰 시 */
+
+        .pid-description { /* PID 설명 스타일 */
+            font-size: 0.7rem;
+            color: #64748b; /* text-slate-500 */
+            display: block;
+            margin-top: 0.1rem;
+        }
 
         td.highlight { 
             font-weight: bold;
@@ -155,14 +162,14 @@
 
         <div class="customer-complaint">
             <h3>고객 요청 사항</h3>
-            <p>"요즘 들어 차가 공회전할 때 RPM이 약간 불안정하고, 예전보다 기름도 조금 더 먹는 것 같아요. 가끔씩 아주 살짝 차가 떨리는 느낌도 있고요."</p>
+            <p>"안녕하세요, 정비사님. 제 차가 요즘 좀 이상해서 왔어요. 한두 달 전부터인가, 신호 대기하려고 멈춰 서면 RPM이 예전보다 살짝 높게 유지되거나, 아주 미세하게 오르락내리락 하는 것 같아요. 그리고 예전에는 안 그랬는데, 주유소도 좀 더 자주 가게 되는 것 같고요. 결정적으로, 가끔씩 차가 정차해 있을 때나 아주 천천히 움직일 때 아주 살짝 부르르 떠는 느낌이 들 때가 있어요. 크게 불편한 건 아닌데, 신경이 좀 쓰여서요. 한번 봐주실 수 있을까요?"</p>
         </div>
 
         <div class="table-container">
             <table>
                 <thead>
                     <tr>
-                        <th>PID 항목</th>
+                        <th>PID 항목 <span class="pid-description">(설명)</span></th>
                         <th>측정 단위</th>
                         <th>정상 공회전 상태 (예시 값)</th>
                         <th>이상 데이터 관찰 시 (공회전) (예시 값)</th>
@@ -170,61 +177,61 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td><strong>엔진 회전수 (RPM)</strong></td>
+                        <td><strong>엔진 회전수 (RPM)</strong><span class="pid-description">엔진 크랭크축의 분당 회전수</span></td>
                         <td>RPM</td>
                         <td>750</td>
                         <td>800 (약간 높거나 불안정)</td>
                     </tr>
                     <tr>
-                        <td><strong>엔진 부하 (LOAD_ABSL)</strong></td>
+                        <td><strong>엔진 부하 (LOAD_ABSL)</strong><span class="pid-description">현재 엔진이 내고 있는 출력의 비율</span></td>
                         <td>%</td>
                         <td>20</td>
                         <td>18 (실제 부하보다 낮게 계산될 수 있음)</td>
                     </tr>
                     <tr>
-                        <td><strong>단기 연료 보정 (SHRTFT1)</strong></td>
+                        <td><strong>단기 연료 보정 (SHRTFT1)</strong><span class="pid-description">실시간 공연비 조정을 위한 연료량 변화율</span></td>
                         <td>%</td>
                         <td>-2 ~ +2 (안정적)</td>
                         <td class="highlight">+20 (높게 유지)</td>
                     </tr>
                     <tr>
-                        <td><strong>장기 연료 보정 (LONGFT1)</strong></td>
+                        <td><strong>장기 연료 보정 (LONGFT1)</strong><span class="pid-description">학습된 공연비 조정을 위한 연료량 변화율</span></td>
                         <td>%</td>
                         <td>1</td>
                         <td class="highlight">+12 (높게 학습됨)</td>
                     </tr>
                     <tr>
-                        <td><strong>점화 시기 (SPARKADV)</strong></td>
+                        <td><strong>점화 시기 (SPARKADV)</strong><span class="pid-description">피스톤 상사점 기준 점화 진각도</span></td>
                         <td>도 (Degrees)</td>
                         <td>10</td>
                         <td>8 (약간 변동 또는 지각)</td>
                     </tr>
                     <tr>
-                        <td><strong>산소 센서 값 (O2S11 또는 EQ_RAT11)</strong></td>
+                        <td><strong>산소 센서 값 (O2S11 또는 EQ_RAT11)</strong><span class="pid-description">배기가스 내 산소 농도 또는 공연비</span></td>
                         <td>전압(V) 또는 비율</td>
                         <td>0.1~0.9V (정상 전환) 또는 약 1.0</td>
                         <td class="highlight">0.1~0.9V (연료보정 후 정상 전환 시도)</td>
                     </tr>
                     <tr>
-                        <td><strong>흡기 매니폴드 압력 (MAP)</strong></td>
+                        <td><strong>흡기 매니폴드 압력 (MAP)</strong><span class="pid-description">흡기 다기관 내 절대 압력 (진공도)</span></td>
                         <td>kPa</td>
                         <td>30 (높은 진공)</td>
                         <td class="highlight">40 (낮은 진공, 즉 압력 상승)</td>
                     </tr>
                     <tr>
-                        <td><strong>냉각수 온도 (ECT)</strong></td>
+                        <td><strong>냉각수 온도 (ECT)</strong><span class="pid-description">엔진 냉각수의 현재 온도</span></td>
                         <td>°C</td>
                         <td>90</td>
                         <td>90 (정상)</td>
                     </tr>
                     <tr>
-                        <td><strong>흡기 온도 (IAT)</strong></td>
+                        <td><strong>흡기 온도 (IAT)</strong><span class="pid-description">엔진으로 유입되는 공기의 온도</span></td>
                         <td>°C</td>
                         <td>35</td>
                         <td>35 (정상)</td>
                     </tr>
                     <tr>
-                        <td><strong>연료 분사 시간 (FUELPW1)</strong></td>
+                        <td><strong>연료 분사 시간 (FUELPW1)</strong><span class="pid-description">연료 인젝터가 열려있는 시간 (ms)</span></td>
                         <td>ms</td>
                         <td>2.5</td>
                         <td class="highlight">3.5 (증가)</td>
@@ -307,7 +314,7 @@
                     explanation += "하지만, 흡기 매니폴드 압력(MAP) 값은 직접적으로 크게 변하지 않거나, 오히려 엔진 부조로 인해 진공이 더 불안정해질 수 있습니다. 이 시나리오의 MAP 값 상승과는 패턴이 다릅니다.";
                 } else if (userAnswer === 'b') {
                     explanation += "<strong>B. 점화 코일 불량 (단일 실린더) 선택:</strong> 특정 실린더의 점화 코일이 불량하면 해당 실린더에서 실화(Misfire)가 발생합니다. ";
-                    explanationHTML += "이 경우, 실린더별 가속도(CYL_ACCL) 값에서 특정 실린더만 현저히 낮은 값을 보이며, 엔진 부조(떨림)가 뚜렷하게 나타납니다. ";
+                    explanation += "이 경우, 실린더별 가속도(CYL_ACCL) 값에서 특정 실린더만 현저히 낮은 값을 보이며, 엔진 부조(떨림)가 뚜렷하게 나타납니다. ";
                     explanation += "산소 센서는 간헐적으로 희박 신호를 보낼 수 있고 연료 보정 값이 변동할 수 있지만, 이 시나리오처럼 모든 실린더에 영향을 주는 듯한 전반적인 높은 연료 보정 값과 MAP 값 상승과는 양상이 다릅니다.";
                 } else if (userAnswer === 'd') {
                     explanation += "<strong>D. 냉각수 온도 센서 이상 선택:</strong> 냉각수 온도 센서(ECT)가 실제보다 낮은 온도를 PCM에 보고하면, PCM은 엔진이 아직 차갑다고 판단하여 연료를 더 농후하게 분사하려고 할 수 있습니다. ";
