@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>엔진 진단 퀴즈 </title>
+    <title>엔진 진단 시나리오</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -98,12 +98,12 @@
             border-radius: 0.375rem;
             font-weight: 500;
         }
-        .feedback.correct {
-            background-color: #d1fae5; /* bg-green-100 */
-            color: #065f46; /* text-green-700 */
-            border: 1px solid #a7f3d0; /* border-green-300 */
+        .feedback.neutral { /* 중립적인 피드백을 위한 스타일 추가 */
+            background-color: #e0e7ff; /* bg-indigo-100 */
+            color: #4338ca; /* text-indigo-700 */
+            border: 1px solid #c7d2fe; /* border-indigo-300 */
         }
-        .feedback.incorrect {
+        .feedback.incorrect { /* '보기를 선택해주세요' 메시지용 스타일은 유지 */
             background-color: #fee2e2; /* bg-red-100 */
             color: #991b1b; /* text-red-700 */
             border: 1px solid #fecaca; /* border-red-300 */
@@ -195,7 +195,7 @@
                 <label><input type="radio" name="diagnosis" value="d"> D. 배기 시스템 막힘</label>
                 <label><input type="radio" name="diagnosis" value="e"> E. 연료 펌프 고장</label>
             </div>
-            <button class="submit-button" id="submitAnswer">정답 확인</button>
+            <button class="submit-button" id="submitAnswer">답변 제출</button>
             <div class="feedback" id="feedbackMessage" style="display: none;"></div>
         </div>
     </div>
@@ -207,36 +207,26 @@
 
         submitButton.addEventListener('click', () => {
             const selectedOption = quizOptions.querySelector('input[name="diagnosis"]:checked');
+            feedbackMessage.style.display = 'none'; // 이전 메시지 숨기기
+
             if (!selectedOption) {
                 feedbackMessage.textContent = "보기를 선택해주세요!";
-                feedbackMessage.className = 'feedback incorrect';
+                feedbackMessage.className = 'feedback incorrect'; // '보기를 선택해주세요'는 오류 스타일 유지
                 feedbackMessage.style.display = 'block';
                 return;
             }
-
-            const userAnswer = selectedOption.value;
-            const correctAnswer = 'c'; // 흡기 시스템 진공 누설
-
-            if (userAnswer === correctAnswer) {
-                feedbackMessage.textContent = "정답입니다! PID 데이터를 정확히 분석하셨네요. 높은 연료 보정 값과 MAP 센서 값 상승이 핵심 단서였습니다.";
-                feedbackMessage.className = 'feedback correct';
-            } else {
-                let explanation = "오답입니다. 다시 한번 PID 데이터를 살펴보세요. ";
-                if (userAnswer === 'a') explanation += "연료 필터가 막히면 연료 압력이 낮아지고, 연료 보정 값은 희박 상태를 보상하려 하겠지만 MAP 센서 값의 변화는 다를 수 있습니다.";
-                else if (userAnswer === 'b') explanation += "점화 코일 불량은 특정 실린더의 실화(Misfire)를 유발하고, CYL_ACCL 값에 뚜렷한 변화를 보입니다. 이 시나리오에서는 모든 실린더에 영향이 있습니다.";
-                else if (userAnswer === 'd') explanation += "배기 시스템이 막히면 엔진 출력이 전반적으로 저하되고, MAP 센서 값이 비정상적으로 높게 나타날 수 있지만 연료 보정 패턴이 다를 수 있습니다.";
-                else if (userAnswer === 'e') explanation += "연료 펌프가 고장나면 연료 압력이 낮아지고, 엔진이 힘이 없거나 시동이 걸리지 않을 수 있으며, 연료 보정 값은 희박을 나타낼 수 있지만 MAP 센서 값 변화와는 다릅니다.";
-                else explanation += "핵심은 측정되지 않은 공기 유입으로 인한 PCM의 연료 보정 노력과 흡기 매니폴드 압력 변화입니다.";
-                feedbackMessage.textContent = explanation;
-                feedbackMessage.className = 'feedback incorrect';
-            }
+            
+            // 답변을 선택한 경우, 정답 여부를 알려주지 않고 중립적인 메시지 표시
+            feedbackMessage.textContent = "답변을 제출했습니다. 스스로 정답을 확인해보세요!";
+            feedbackMessage.className = 'feedback neutral'; // 중립적인 스타일 적용
             feedbackMessage.style.display = 'block';
+
+            // 실제 정답 확인 로직은 여기서 실행하지 않음 (비공개 처리)
+            // const userAnswer = selectedOption.value;
+            // const correctAnswer = 'c'; 
+            // if (userAnswer === correctAnswer) { ... } else { ... }
         });
     </script>
-
-</body>
-</html>
-
 
 </body>
 </html>
