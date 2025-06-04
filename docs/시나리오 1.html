@@ -283,12 +283,20 @@
             const correctAnswer = 'c'; 
 
             if (userAnswer === correctAnswer) {
+                const tableBodyRows = document.querySelectorAll('.table-container table tbody tr');
+                // 표의 실제 데이터 행 인덱스에 맞게 수정 (0부터 시작)
+                const shrtft1Value = tableBodyRows[2].cells[3].textContent.trim(); 
+                const longft1Value = tableBodyRows[3].cells[3].textContent.trim();
+                const o2s11Value = tableBodyRows[5].cells[3].textContent.trim(); 
+                const mapValue = tableBodyRows[6].cells[3].textContent.trim();     
+                const fuelpw1Value = tableBodyRows[9].cells[3].textContent.trim(); 
+
                 let explanationHTML = "<strong>정답입니다! PID 데이터를 정확히 분석하셨네요.</strong><div class='feedback-details'>주요 단서는 다음과 같습니다:<br><br>";
-                explanationHTML += `<strong>단기 연료 보정 (SHRTFT1) ${document.querySelector('td.highlight:nth-of-type(1)').textContent.trim()}:</strong> ${pidExplanations.shrtft1}<br><br>`;
-                explanationHTML += `<strong>장기 연료 보정 (LONGFT1) ${document.querySelector('td.highlight:nth-of-type(2)').textContent.trim()}:</strong> ${pidExplanations.longft1}<br><br>`;
-                explanationHTML += `<strong>흡기 매니폴드 압력 (MAP) ${document.querySelector('td.highlight:nth-of-type(4)').textContent.trim()}:</strong> ${pidExplanations.map}<br><br>`;
-                explanationHTML += `<strong>연료 분사 시간 (FUELPW1) ${document.querySelector('td.highlight:nth-of-type(5)').textContent.trim()}:</strong> ${pidExplanations.fuelpw1_increase}<br><br>`;
-                explanationHTML += `<strong>산소 센서 값의 변화:</strong> ${pidExplanations.o2s11_lean_then_corrects}<br><br>`;
+                explanationHTML += `<strong>단기 연료 보정 (SHRTFT1) ${shrtft1Value}:</strong> ${pidExplanations.shrtft1}<br><br>`;
+                explanationHTML += `<strong>장기 연료 보정 (LONGFT1) ${longft1Value}:</strong> ${pidExplanations.longft1}<br><br>`;
+                explanationHTML += `<strong>흡기 매니폴드 압력 (MAP) ${mapValue}:</strong> ${pidExplanations.map_high}<br><br>`; // pidExplanations 키값 수정
+                explanationHTML += `<strong>연료 분사 시간 (FUELPW1) ${fuelpw1Value}:</strong> ${pidExplanations.fuelpw1_increase}<br><br>`;
+                explanationHTML += `<strong>산소 센서 값의 변화 (${o2s11Value}):</strong> ${pidExplanations.o2s11_lean_then_corrects}<br><br>`;
                 explanationHTML += `이러한 현상들은 측정되지 않은 공기(도둑 공기)가 흡기 시스템으로 유입되어 PCM이 연료를 과도하게 보상하고 있음을 나타냅니다. 고객이 언급한 RPM 불안정, 연비 저하, 간헐적 떨림 증상과도 일치합니다.</div>`;
                 feedbackMessage.innerHTML = explanationHTML;
                 feedbackMessage.className = 'feedback correct';
@@ -305,6 +313,10 @@
             feedbackMessage.style.display = 'block';
         });
     </script>
+
+</body>
+</html>
+
 
 </body>
 </html>
