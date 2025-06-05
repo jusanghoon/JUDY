@@ -8,12 +8,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Chosen Palette: Warm Autumn Neutrals with Maple Accents (Light Beige, Dark Stone, Warm Orange, Deep Red, Soft Brown) -->
-    <!-- Application Structure Plan: Tab-based navigation for "여행 개요", "1일차", "2일차", "3일차", and "여행 팁". Each day's tab displays a chronological itinerary with image placeholders. Image display CSS updated to ensure images are shown in their original aspect ratio without cropping, particularly for multi-image layouts. -->
+    <!-- Application Structure Plan: Tab-based navigation. Day 1 evening section, under the "easy-example" paragraph about the evening stroll, updated to include a 2-image side-by-side placeholder for Nishiki Market. -->
     <!-- Visualization & Content Choices: 
         - Itinerary Data: Structured HTML, Tailwind styling, Unicode icons, image placeholders. Interaction: Tab navigation, sunny/rainy toggles.
-        - Key Info: Structured HTML in "여행 개요". Accommodation image placeholder updated with user's Imgur link.
+        - Key Info: Structured HTML in "여행 개요".
         - Budget Information: Doughnut chart (Chart.js) in "여행 개요".
-        - Image Placeholders: `<img>` tags with placeholder `src`. CSS ensures `height: auto` and appropriate width management by parent containers (flex/grid) to maintain aspect ratio and prevent cropping for all image layouts (single, multi, three-grid, four-grid).
+        - Image Placeholders: `<img>` tags with placeholder `src` and descriptive `alt`. Day 1 evening section updated to include two image placeholders for Nishiki Market under the specified paragraph.
         - Confirmation: NO SVG graphics used. NO Mermaid JS used.
     -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
@@ -67,6 +67,10 @@
         .itinerary-item ul {
             margin-top: 0.5rem; 
         }
+        .itinerary-item ul.sub-list { /* For nested lists under restaurant types */
+            margin-top: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
         .easy-example {
             font-style: italic;
             color: #795548; 
@@ -118,21 +122,21 @@
         .multi-image-container img, 
         .three-image-grid img, 
         .four-image-grid img {
-            width: 100%; /* Fill container width */
-            height: auto; /* Maintain aspect ratio */
-            max-width: 100%; /* Ensure it doesn't overflow its column/cell */
+            width: 100%; 
+            height: auto; 
+            max-width: 100%; 
             border-radius: 0.5rem;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             display: block; 
         }
         
-        .single-image-container img { /* For single centered images that might be smaller than container */
-            max-width: 400px; /* Example max width for single large image */
+        .single-image-container img { 
+            max-width: 400px; 
             margin-left: auto;
             margin-right: auto;
         }
 
-        .multi-image-container { /* For 2 images side-by-side */
+        .multi-image-container { 
             display: flex;
             flex-direction: column; 
             gap: 1rem; 
@@ -140,10 +144,10 @@
         @media (min-width: 640px) { 
             .multi-image-container {
                 flex-direction: row; 
-                align-items: flex-start; /* Align to top if heights differ */
+                align-items: flex-start; 
             }
-            .multi-image-container > div { /* Wrapper for each image in multi-image */
-                 width: calc(50% - 0.5rem); /* Each image container takes half width minus half gap */
+            .multi-image-container > div { 
+                 width: calc(50% - 0.5rem); 
             }
         }
 
@@ -151,17 +155,18 @@
             display: grid;
             grid-template-columns: repeat(1, 1fr); 
             gap: 1rem;
+            margin-top: 0.5rem; 
         }
         @media (min-width: 640px) { 
             .three-image-grid {
                 grid-template-columns: repeat(3, 1fr);
             }
             .four-image-grid { 
-                grid-template-columns: repeat(2, 1fr); /* 2x2 grid */
+                grid-template-columns: repeat(2, 1fr); 
             }
         }
-        /* No specific height or object-fit needed for .three-image-grid img and .four-image-grid img, 
-           as base styling already sets height: auto and width: 100% */
+        .restaurant-image-grid img { 
+        }
 
     </style>
 </head>
@@ -237,43 +242,55 @@
                         <li>
                             <strong>교토 가정식 (오반자이):</strong> 숙소 근처나 기온 지역. 제철 재료, 다양한 반찬.
                             <div class="image-placeholder-container four-image-grid mt-2">
-                                <img src="https://placehold.co/300x200/F3EADA/6D4C41?text=오반자이+1" alt="교토 오반자이 요리 예시 1">
-                                <img src="https://placehold.co/300x200/FEFBF6/BF5700?text=오반자이+2" alt="교토 오반자이 요리 예시 2">
-                                <img src="https://placehold.co/300x200/E67E22/FFFFFF?text=오반자이+3" alt="교토 오반자이 요리 예시 3">
-                                <img src="https://placehold.co/300x200/D35400/FFFFFF?text=오반자이+4" alt="교토 오반자이 요리 예시 4">
+                                <img src="https://i.imgur.com/46DvemG.png" alt="교토 오반자이 요리 예시 1">
+                                <img src="https://i.imgur.com/3NTWzog.png" alt="교토 오반자이 요리 예시 2">
+                                <img src="https://i.imgur.com/h7lAm12.png" alt="교토 오반자이 요리 예시 3">
+                                <img src="https://i.imgur.com/S3VmU4b.png" alt="교토 오반자이 요리 예시 4">
                             </div>
                         </li>
                         <li>
                             <strong>두부 요리 전문점 - Tousuiro Kiyamachi Shop (豆水楼 木屋町本店):</strong> 카모가와 강변에 위치하여 분위기가 좋으며, 다양한 두부 코스 요리를 즐길 수 있습니다. (숙소에서 기온/폰토쵸 방면으로 이동 필요, 예약 권장)
-                            <div class="image-placeholder-container three-image-grid mt-2">
-                                <img src="https://placehold.co/400x300/BDC3C7/FFFFFF?text=Tousuiro+외관" alt="Tousuiro Kiyamachi 본점 외관 예시">
-                                <img src="https://placehold.co/400x300/A0522D/FFFFFF?text=Tousuiro+두부요리" alt="Tousuiro 두부요리 예시">
-                                <img src="https://placehold.co/400x300/8E44AD/FFFFFF?text=Tousuiro+강변+좌석" alt="Tousuiro 강변 좌석 분위기 예시">
+                            <div class="image-placeholder-container three-image-grid mt-2 restaurant-image-grid">
+                                <img src="https://i.imgur.com/3mfFnBH.png" alt="Tousuiro Kiyamachi 본점 외관 예시">
+                                <img src="https://i.imgur.com/gFoCEkT.png" alt="Tousuiro 두부요리 예시">
+                                <img src="https://i.imgur.com/UJBcTRe.png" alt="Tousuiro 강변 좌석 분위기 예시">
                             </div>
                         </li>
                         <li>
-                            <strong>우동/소바:</strong> 기온/폰토쵸에서 쉽게 찾을 수 있는 따뜻한 면 요리.
-                             <div class="image-placeholder-container three-image-grid mt-2">
-                                <img src="https://placehold.co/400x300/F3EADA/6D4C41?text=교토+우동" alt="따뜻한 교토 우동 예시">
-                                <img src="https://placehold.co/400x300/FEFBF6/BF5700?text=교토+소바" alt="정갈한 교토 소바 예시">
-                                <img src="https://placehold.co/400x300/E67E22/FFFFFF?text=기온+거리+면요리집" alt="기온 거리 면요리집 분위기 예시">
-                            </div>
-                        </li>
-                        <li>
-                            <strong>폰토쵸 강변 식당 & 캐주얼 일식 (덮밥, 돈카츠 등):</strong> 폰토쵸에는 다양한 종류의 식당이 있으며, 숙소 근처나 시내 곳곳에서 덮밥, 돈카츠 등 캐주얼한 일식도 즐길 수 있습니다.
-                            <div class="image-placeholder-container">
-                                <div class="multi-image-container mt-2">
-                                    <div class="w-full sm:w-1/2"><img src="https://placehold.co/600x400/F39C12/FFFFFF?text=폰토쵸+강변+식당+지도" alt="폰토쵸 강변 식당 지도 예시"></div>
-                                    <div class="w-full sm:w-1/2"><img src="https://placehold.co/600x400/A0522D/FFFFFF?text=교토+돈카츠+덮밥+지도" alt="교토 돈카츠 또는 덮밥집 지도 예시"></div>
+                            <strong>우동/소바 (기온/폰토쵸):</strong>
+                            <ul class="list-none pl-4 text-sm sub-list">
+                                <li>- <strong>기온 오카루 (祇園 おかる):</strong> 카레우동과 치즈카레우동이 유명한 기온의 노포. 따뜻하고 든든한 한 끼로 좋습니다.</li>
+                                <div class="image-placeholder-container three-image-grid mt-2 restaurant-image-grid">
+                                    <img src="https://i.imgur.com/ZKXsru2.png" alt="기온 오카루 외관 예시">
+                                    <img src="https://i.imgur.com/lhB1SAG.png" alt="기온 오카루 카레우동 예시">
+                                    <img src="https://i.imgur.com/G2jEjYK.png" alt="기온 오카루 내부 분위기 예시">
                                 </div>
+                                <li>- <strong>마츠바 (松葉) 본점:</strong> 교토 명물 니신소바(청어소바)를 맛볼 수 있는 역사 깊은 곳. (기온시조역 근처)</li>
+                                 <div class="image-placeholder-container three-image-grid mt-2 restaurant-image-grid">
+                                    <img src="https://i.imgur.com/dhKsYaz.png" alt="마츠바 니신소바 예시 1">
+                                    <img src="https://i.imgur.com/acUl9ae.png" alt="마츠바 니신소바 예시 2">
+                                    <img src="https://i.imgur.com/EJGmNCk.png" alt="마츠바 가게 전경 예시">
+                                </div>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>폰토쵸 이자카야 또는 캐주얼 다이닝:</strong>
+                             <ul class="list-none pl-4 text-sm sub-list">
+                                <li>- <strong>코코데노메 (ここでのめ):</strong> 폰토쵸에 위치한 분위기 좋은 이자카야. 다양한 창작 요리와 사케를 즐길 수 있습니다. (예약 권장)</li>
+                            </ul>
+                             <div class="image-placeholder-container single-image-container mt-2">
+                                <img src="https://i.imgur.com/8IGF8MA.png" alt="코코데노메 또는 폰토쵸 분위기 있는 식당 예시">
                             </div>
                         </li>
                     </ul>
                     <p class="mt-4">식사 후, <strong>오카자키 공원 주변</strong>이나 <strong>헤이안 신궁 외관</strong>을 가볍게 산책하거나, 조금 이동하여 <strong>기온 거리</strong>, <strong>폰토쵸</strong> 산책.</p>
-                    <div class="image-placeholder-container single-image-container">
-                        <img src="https://placehold.co/600x400/E67E22/FFFFFF?text=기온+거리+밤+풍경" alt="기온 거리 밤 풍경">
+                    <p class="easy-example">저녁으로 따뜻한 카레우동이나 니신소바 어떠세요? 식사 후에는 숙소 근처 오카자키 공원을 조용히 거닐거나, 활기 넘치는 기온 거리로 가서 교토의 밤을 느껴보는 것도 멋질 거예요!</p>
+                     <div class="image-placeholder-container">
+                        <div class="multi-image-container mt-2">
+                           <div class="w-full sm:w-1/2"><img src="https://i.imgur.com/9f1IX7f.png" alt="니시키 시장 음식 예시"></div>
+                           <div class="w-full sm:w-1/2"><img src="https://i.imgur.com/g50ssxh.jpeg" alt="니시키 시장 풍경 예시"></div>
+                        </div>
                     </div>
-                    <p class="easy-example">저녁으로 따뜻한 오반자이나 두부 요리 어떠세요? 식사 후에는 숙소 근처 오카자키 공원을 조용히 거닐거나, 활기 넘치는 기온 거리로 가서 교토의 밤을 느껴보는 것도 멋질 거예요!</p>
                 </div>
             </div>
 
@@ -284,8 +301,11 @@
                     <h3><span class="text-xl">☕🚗</span> 오전 : 아침 식사 및 아라시야마 이동</h3>
                     <p><strong>08:00 ~ 09:00:</strong> 숙소(사쿄구 오카자키 지역) 근처에서 아침 식사 또는 숙소에서 간단히 해결.</p>
                     <p class="easy-example">오카자키 공원 근처나 헤이안 신궁 주변 카페에서 아침을 시작해보세요.</p>
-                    <div class="image-placeholder-container single-image-container">
-                        <img src="https://placehold.co/600x400/F3EADA/6D4C41?text=교토+오카자키+카페" alt="교토 오카자키 카페">
+                    <div class="image-placeholder-container">
+                        <div class="multi-image-container">
+                           <div class="w-full sm:w-1/2"><img src="https://i.imgur.com/kaVrxJg.png" alt="교토 오카자키 카페 예시 1"></div>
+                           <div class="w-full sm:w-1/2"><img src="https://i.imgur.com/MT1UYud.png" alt="교토 오카자키 카페 예시 2"></div>
+                        </div>
                     </div>
                     <p><strong>09:30 ~ 10:45 경:</strong> 식사 후 렌터카로 아라시야마 토롯코 사가역 이동 및 주차. (사쿄구에서 이동 시 약 40~50분 예상)</p>
                 </div>
@@ -297,18 +317,23 @@
                             <button class="rainy-btn" onclick="toggleWeatherPlan(this, 'day2-arashiyama-rainy')">🌧️ 비 올 때</button>
                         </div>
                         <div id="day2-arashiyama-sunny" class="weather-plan active">
-                             <p><strong>11:00 ~ 11:25 (예시):</strong> <strong>사가노 토롯코 열차</strong> 탑승, 호즈강 협곡 단풍 감상. (사전 예약 필수! 요금: 어른 편도 880엔, 어린이 440엔)</p>
+                             <p><strong>11:00 ~ 11:25 (예시):</strong> <strong>사가노 토롯코 열차(嵯峨野トロッコ列車)</strong> 탑승, 호즈강 협곡 단풍 감상. (사전 예약 필수! 요금: 어른 편도 880엔, 어린이 440엔)</p>
+                             <div class="image-placeholder-container three-image-grid mt-2">
+                                <img src="https://i.imgur.com/cSfSDV5.png" alt="사가노 토롯코 열차에서 본 단풍 1">
+                                <img src="https://i.imgur.com/BJAJKlY.jpeg" alt="사가노 토롯코 열차에서 본 단풍 2">
+                                <img src="https://i.imgur.com/goR5Wp6.jpeg" alt="사가노 토롯코 열차 모습">
+                            </div>
                              <p><strong>11:30 ~ 13:00:</strong> <strong>텐류지</strong> 조겐치 정원, <strong>치쿠린</strong>, <strong>도게츠교</strong> 주변 가을 풍경 감상.</p>
                              <div class="image-placeholder-container three-image-grid mt-4">
-                                <img src="https://placehold.co/400x300/E67E22/FFFFFF?text=사가노+토롯코+열차" alt="사가노 토롯코 열차와 단풍">
-                                <img src="https://placehold.co/400x300/D35400/FFFFFF?text=아라시야마+치쿠린+풍경" alt="아라시야마 치쿠린 대나무 숲">
-                                <img src="https://placehold.co/400x300/F39C12/FFFFFF?text=도게츠교와+단풍" alt="도게츠교와 주변 단풍">
+                                <img src="https://i.imgur.com/e5ZYLzf.png" alt="텐류지 단풍 정원">
+                                <img src="https://i.imgur.com/oaISWbf.png" alt="아라시야마 치쿠린 대나무 숲">
+                                <img src="https://i.imgur.com/PP3w79G.png" alt="도게츠교와 주변 단풍">
                             </div>
                         </div>
                         <div id="day2-arashiyama-rainy" class="weather-plan hidden">
                             <p><strong>사가노 토롯코 열차</strong> 탑승 (창문 있어 비 와도 가능) 또는 <strong>디오라마 교토 JAPAN</strong> 관람 (요금: JPY 1,250엔 부터 ~).</p>
                              <div class="image-placeholder-container single-image-container">
-                                <img src="https://placehold.co/600x400/F39C12/FFFFFF?text=디오라마+교토+JAPAN" alt="디오라마 교토 JAPAN">
+                                <img src="https://i.imgur.com/ZcVAxzI.png" alt="디오라마 교토 JAPAN">
                             </div>
                             <p><strong>텐류지</strong> 법당 등 실내에서 정원 감상. 치쿠린/도게츠교는 날씨 따라 짧게 또는 생략. 대안: 아라시야마 미술관/온천.</p>
                         </div>
@@ -318,26 +343,45 @@
                     <h3><span class="text-xl">🍽️</span> 13:00 ~ 14:00 : 점심 식사 (아라시야마)</h3>
                     <p>아라시야마 근처에서 점심 식사.</p>
                     <h4 class="font-semibold mt-3 mb-1 text-gray-700">추천 식당 (새로운 곳 위주):</h4>
-                     <ul class="list-disc list-inside ml-4 text-gray-600 space-y-1">
-                        <li><strong>아라시야마 요시무라 (嵐山よしむら):</strong> 도게츠교 전망이 좋은 유명한 소바(메밀국수) 전문점.</li>
-                        <li><strong>사가도후 이네 (嵯峨とうふ 稲) 본점/북점:</strong> 다양한 두부 요리와 유바(두부 껍질) 요리를 맛볼 수 있는 곳.</li>
-                        <li><strong>카페 하세가와 (Cafe % Arabica Kyoto Arashiyama):</strong> % 아라비카 커피. 커피와 함께 간단한 간식. (매우 인기 많아 대기 길 수 있음)</li>
-                        <li><strong>빵과 에스프레소와 아라시야마 정원 (パンとエスプレッソと嵐山庭園):</strong> 오래된 가옥을 개조한 아름다운 베이커리 카페.</li>
+                     <ul class="list-disc list-inside ml-4 text-gray-600 space-y-2">
+                        <li>
+                            <strong>아라시야마 요시무라 (嵐山よしむら):</strong> 도게츠교 전망이 좋은 유명한 소바(메밀국수) 전문점.
+                            <div class="image-placeholder-container multi-image-container mt-2">
+                                <div class="w-full sm:w-1/2"><img src="https://i.imgur.com/N79GZVp.png" alt="아라시야마 요시무라 소바 예시"></div>
+                                <div class="w-full sm:w-1/2"><img src="https://i.imgur.com/KnHSYyt.png" alt="아라시야마 요시무라 가게 전경 예시"></div>
+                            </div>
+                        </li>
+                        <li>
+                            <strong>사가도후 이네 (嵯峨とうふ 稲) 본점/북점:</strong> 다양한 두부 요리와 유바(두부 껍질) 요리를 맛볼 수 있는 곳.
+                            <div class="image-placeholder-container multi-image-container mt-2">
+                                <div class="w-full sm:w-1/2"><img src="https://i.imgur.com/ihvOD78.png" alt="사가도후 이네 두부정식 예시"></div>
+                                <div class="w-full sm:w-1/2"><img src="https://i.imgur.com/bj1NQCM.png" alt="사가도후 이네 유바요리 예시"></div>
+                            </div>
+                        </li>
+                        <li>
+                            <strong>카페 하세가와 (Cafe % Arabica Kyoto Arashiyama):</strong> % 아라비카 커피. 커피와 함께 간단한 간식. (매우 인기 많아 대기 길 수 있음)
+                             <div class="image-placeholder-container multi-image-container mt-2">
+                                <div class="w-full sm:w-1/2"><img src="https://i.imgur.com/KzjaZIu.png" alt="아라비카 교토 커피"></div>
+                                <div class="w-full sm:w-1/2"><img src="https://i.imgur.com/LPZhyJy.png" alt="아라비카 카페 전경"></div>
+                            </div>
+                        </li>
+                        <li>
+                            <strong>빵과 에스프레소와 아라시야마 정원 (パンとエスプレッソと嵐山庭園):</strong> 오래된 가옥을 개조한 아름다운 베이커리 카페.
+                            <div class="image-placeholder-container multi-image-container mt-2">
+                                <div class="w-full sm:w-1/2"><img src="https://i.imgur.com/DfNaNc2.png" alt="빵과 에스프레소와 아라시야마 정원 빵 예시"></div>
+                                <div class="w-full sm:w-1/2"><img src="https://i.imgur.com/OxpKwy0.png" alt="빵과 에스프레소와 아라시야마 정원 모습"></div>
+                            </div>
+                        </li>
                     </ul>
-                     <div class="image-placeholder-container three-image-grid mt-4">
-                        <img src="https://placehold.co/400x300/A0522D/FFFFFF?text=아라시야마+요시무라+소바" alt="아라시야마 요시무라 소바 예시">
-                        <img src="https://placehold.co/400x300/BF5700/FFFFFF?text=아라비카+교토+커피" alt="아라비카 교토 커피 예시">
-                        <img src="https://placehold.co/400x300/D35400/FFFFFF?text=아라시야마+베이커리+카페" alt="아라시야마 베이커리 카페 예시">
-                    </div>
                     <p class="easy-example">아라시야마에는 맛집이 정말 많아요! 도게츠교를 바라보며 메밀국수를 먹거나, 예쁜 정원이 있는 카페에서 잠시 쉬어가는 것도 좋겠죠?</p>
                 </div>
                 <div class="itinerary-item">
                      <h3><span class="text-xl">🏯✨</span> 오후 : 금각사 & 저녁 단풍 라이트업 준비</h3>
                      <p><strong>14:00 ~ 15:40:</strong> 렌터카로 <strong>금각사(킨카쿠지)</strong> 이동 및 관람.</p>
                      <div class="image-placeholder-container three-image-grid mt-4">
-                        <img src="https://placehold.co/400x300/BDC3C7/000000?text=금각사+정면" alt="금각사 정면 모습">
-                        <img src="https://placehold.co/400x300/F3EADA/6D4C41?text=금각사와+단풍" alt="금각사와 어우러진 단풍">
-                        <img src="https://placehold.co/400x300/FEFBF6/BF5700?text=금각사+연못+반영" alt="금각사 연못에 비친 모습">
+                        <img src="https://i.imgur.com/fpRdoQE.png" alt="금각사 정면 모습">
+                        <img src="https://i.imgur.com/PxNQ9yv.png" alt="금각사와 어우러진 단풍">
+                        <img src="https://i.imgur.com/tZTlmXZ.png" alt="금각사 연못에 비친 모습">
                     </div>
                     <p><strong>15:40 이후:</strong> 저녁 단풍 라이트업 선택 관광지로 이동 또는 숙소 복귀 후 재정비.</p>
                 </div>
@@ -345,21 +389,21 @@
                     <h3><span class="text-xl">🌃🍁</span> 저녁 : 단풍 라이트업 선택 관광 (택 1)</h3>
                     <p><strong>옵션 1: 에이칸도 젠린지 라이트업</strong> (강력 추천! "단풍의 에이칸도") - 숙소(사쿄구)에서 비교적 가까움.</p>
                      <div class="image-placeholder-container three-image-grid mt-4">
-                        <img src="https://placehold.co/400x300/8E44AD/FFFFFF?text=에이칸도+라이트업+입구" alt="에이칸도 라이트업 입구">
-                        <img src="https://placehold.co/400x300/E67E22/FFFFFF?text=에이칸도+연못+단풍" alt="에이칸도 연못과 단풍 라이트업">
-                        <img src="https://placehold.co/400x300/D35400/FFFFFF?text=에이칸도+단풍+터널" alt="에이칸도 단풍 터널 라이트업">
+                        <img src="https://i.imgur.com/VcRP5PL.png" alt="에이칸도 라이트업 입구">
+                        <img src="https://i.imgur.com/q6gw2yf.png" alt="에이칸도 연못과 단풍 라이트업">
+                        <img src="https://i.imgur.com/iGUkRAW.png" alt="에이칸도 단풍 터널 라이트업">
                     </div>
                     <p><strong>옵션 2: 고다이지 라이트업</strong> (기온 근처)</p>
                      <div class="image-placeholder-container three-image-grid mt-4">
-                        <img src="https://placehold.co/400x300/BF5700/FFFFFF?text=고다이지+라이트업+정원" alt="고다이지 라이트업 정원">
-                        <img src="https://placehold.co/400x300/A0522D/FFFFFF?text=고다이지+대나무숲+조명" alt="고다이지 대나무숲 조명">
-                        <img src="https://placehold.co/400x300/795548/FFFFFF?text=고다이지+프로젝션맵핑" alt="고다이지 프로젝션맵핑 (있을 경우)">
+                        <img src="https://i.imgur.com/NwSK10m.png" alt="고다이지 라이트업 정원">
+                        <img src="https://i.imgur.com/ZVrTtIa.png" alt="고다이지 대나무숲 조명">
+                        <img src="https://i.imgur.com/BkkVY6c.png" alt="고다이지 프로젝션맵핑 (있을 경우)">
                     </div>
                     <p><strong>옵션 3: 니조 성 가을 라이트업</strong> (2025년 정보 확인 필수)</p>
                      <div class="image-placeholder-container three-image-grid mt-4">
-                        <img src="https://placehold.co/400x300/F39C12/FFFFFF?text=니조성+라이트업+성곽" alt="니조성 라이트업 성곽">
-                        <img src="https://placehold.co/400x300/E67E22/FFFFFF?text=니조성+정원+조명" alt="니조성 정원 조명">
-                        <img src="https://placehold.co/400x300/D35400/FFFFFF?text=니조성+행사+모습" alt="니조성 라이트업 행사 모습">
+                        <img src="https://i.imgur.com/nWzRlLO.png" alt="니조성 라이트업 성곽">
+                        <img src="https://i.imgur.com/YJp3Y6f.png" alt="니조성 정원 조명">
+                        <img src="https://i.imgur.com/gHVyN2k.png" alt="니조성 라이트업 행사 모습">
                     </div>
                     <p class="easy-example">선택한 라이트업 관람. 관람 전후로 저녁 식사. (모든 라이트업 정보 사전 확인, 예약 및 대기 고려, 오후 8시경 식사 시 라스트 오더 확인 및 예약 권장)</p>
                 </div>
@@ -373,62 +417,50 @@
                     <p><strong>08:30 ~ 09:00:</strong> 숙소에서 아침 간단히 해결 후 렌터카로 **난젠지(南禅寺)**로 출발. (숙소에서 **약 5~10분 소요 예상**)</p>
                     <p><strong>09:00/09:30 ~ 12:00:</strong> 난젠지 도착 및 주차 후 경내 단풍, 산문, 수로각, 방장 정원 등 관람.</p>
                     <div class="image-placeholder-container three-image-grid mt-4">
-                        <img src="https://placehold.co/400x300/E67E22/FFFFFF?text=난젠지+산문" alt="난젠지 산문과 단풍">
-                        <img src="https://placehold.co/400x300/F39C12/FFFFFF?text=난젠지+수로각" alt="난젠지 수로각 가을 풍경">
-                        <img src="https://placehold.co/400x300/D35400/FFFFFF?text=난젠지+정원" alt="난젠지 방장 정원">
+                        <img src="https://i.imgur.com/SHlpVuP.png" alt="난젠지 산문과 단풍">
+                        <img src="https://i.imgur.com/vlcJYas.png" alt="난젠지 수로각 가을 풍경">
+                        <img src="https://i.imgur.com/OGB8rP9.png" alt="난젠지 방장 정원">
                     </div>
                     <p class="easy-example">비 올 경우: 호조 정원 등 실내 위주 관람. 숙소와 가까우니 날씨 상황 보고 유동적으로 결정 가능.</p>
                 </div>
                 <div class="itinerary-item">
                     <h3><span class="text-xl">🍽️</span> 12:00 ~ 13:00 : 점심 식사 (교토에서의 마지막 식사)</h3>
-                    <p>난젠지 근처, 숙소(사쿄구 오카자키) 근처 또는 교토역으로 이동하여 점심 식사.</p>
+                    <p>난젠지 근처, 숙소(사쿄구 오카자키) 근처에서 점심 식사.</p>
                     <h4 class="font-semibold mt-3 mb-1 text-gray-700">추천 식당 (새로운 곳 위주):</h4>
                     <ul class="list-disc list-inside ml-4 text-gray-600 space-y-2">
                         <li><strong>난젠지/오카자키 근처:</strong>
                             <ul class="list-circle list-inside ml-4">
                                 <li>
                                     오쿠탄 (奥丹) 또는 준세이 (順正): 전통 유도후(따뜻한 두부 요리) 전문점. 아름다운 정원을 보며 식사 가능. (어르신들께 특히 좋음)
-                                    <div class="image-placeholder-container multi-image-container mt-2">
-                                        <div class="w-full sm:w-1/2"><img src="https://placehold.co/400x300/F3EADA/6D4C41?text=오쿠탄+유도후" alt="오쿠탄 유도후 예시"></div>
-                                        <div class="w-full sm:w-1/2"><img src="https://placehold.co/400x300/FEFBF6/BF5700?text=준세이+정원" alt="준세이 정원 예시"></div>
+                                    <div class="image-placeholder-container">
+                                        <div class="multi-image-container mt-2">
+                                            <div class="w-full sm:w-1/2"><img src="https://i.imgur.com/dB6jQi6.png" alt="오쿠탄 유도후 예시"></div>
+                                            <div class="w-full sm:w-1/2"><img src="https://i.imgur.com/BGBmm0H.png" alt="준세이 정원 예시"></div>
+                                        </div>
                                     </div>
                                 </li>
                                 <li>
                                     블루 보틀 커피 교토 카페 (Blue Bottle Coffee Kyoto Cafe): 세련된 분위기의 카페. 가벼운 브런치나 샌드위치, 커피. (젊은 세대 선호)
-                                    <div class="image-placeholder-container multi-image-container mt-2">
-                                        <div class="w-full sm:w-1/2"><img src="https://placehold.co/400x300/E67E22/FFFFFF?text=블루보틀+외관" alt="블루보틀 교토 카페 외관 예시"></div>
-                                        <div class="w-full sm:w-1/2"><img src="https://placehold.co/400x300/D35400/FFFFFF?text=블루보틀+커피와+디저트" alt="블루보틀 커피와 디저트 예시"></div>
+                                    <div class="image-placeholder-container">
+                                        <div class="multi-image-container mt-2">
+                                            <div class="w-full sm:w-1/2"><img src="https://i.imgur.com/05Jm8Gx.png" alt="블루보틀 교토 카페 외관 예시"></div>
+                                            <div class="w-full sm:w-1/2"><img src="https://i.imgur.com/he2tyon.png" alt="블루보틀 커피와 디저트 예시"></div>
+                                        </div>
                                     </div>
                                 </li>
                                 <li>
                                     야마모토멘조 (山元麺蔵): 매우 유명한 우동 맛집 (대기 길 수 있음, 시간 여유 확인).
-                                    <div class="image-placeholder-container multi-image-container mt-2">
-                                        <div class="w-full sm:w-1/2"><img src="https://placehold.co/400x300/F39C12/FFFFFF?text=야마모토멘조+우동" alt="야마모토멘조 우동 예시"></div>
-                                        <div class="w-full sm:w-1/2"><img src="https://placehold.co/400x300/A0522D/FFFFFF?text=야마모토멘조+가게+앞" alt="야마모토멘조 가게 앞 대기줄 예시"></div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </li>
-                        <li><strong>교토역 이동 시:</strong>
-                            <ul class="list-circle list-inside ml-4">
-                                <li>
-                                    교토역 이세탄 백화점 11층 '잇포 초지안(イートパラダイス)' 식당가: 다양한 종류의 고급 레스토랑 밀집.
-                                    <div class="image-placeholder-container multi-image-container mt-2">
-                                        <div class="w-full sm:w-1/2"><img src="https://placehold.co/400x300/BDC3C7/FFFFFF?text=이세탄+백화점+식당가1" alt="이세탄 백화점 식당가 모습 예시 1"></div>
-                                        <div class="w-full sm:w-1/2"><img src="https://placehold.co/400x300/8E44AD/FFFFFF?text=이세탄+백화점+식당가2" alt="이세탄 백화점 식당가 음식 예시 2"></div>
-                                    </div>
-                                </li>
-                                <li>
-                                    교토 라멘 코지 (京都拉麺小路): 교토역 빌딩 10층. 전국 유명 라멘 가게들을 한 곳에서 맛볼 수 있음.
-                                     <div class="image-placeholder-container multi-image-container mt-2">
-                                        <div class="w-full sm:w-1/2"><img src="https://placehold.co/400x300/BF5700/FFFFFF?text=교토+라멘코지+입구" alt="교토 라멘코지 입구 예시"></div>
-                                        <div class="w-full sm:w-1/2"><img src="https://placehold.co/400x300/E67E22/FFFFFF?text=라멘코지+라멘+종류" alt="교토 라멘코지 라멘 종류 예시"></div>
+                                    <div class="image-placeholder-container">
+                                        <div class="multi-image-container mt-2">
+                                            <div class="w-full sm:w-1/2"><img src="https://i.imgur.com/50UAvRR.png" alt="야마모토멘조 우동 예시"></div>
+                                            <div class="w-full sm:w-1/2"><img src="https://i.imgur.com/zz9o2zX.png" alt="야마모토멘조 가게 앞 대기줄 예시"></div>
+                                        </div>
                                     </div>
                                 </li>
                             </ul>
                         </li>
                     </ul>
-                    <p class="easy-example">교토에서의 마지막 식사는 좀 더 특별하게! 난젠지 근처 멋진 정원이 있는 두부 요리집이나, 세련된 카페에서의 브런치 어떠세요? 아니면 교토역으로 가서 다양한 맛집 중에 골라보는 것도 좋고요!</p>
+                    <p class="easy-example">교토에서의 마지막 식사는 좀 더 특별하게! 난젠지 근처 멋진 정원이 있는 두부 요리집이나, 세련된 카페에서의 브런치 어떠세요?</p>
                 </div>
                 <div class="itinerary-item">
                     <h3><span class="text-xl">🚗✈️</span> 13:00 ~ 19:05 : 공항 이동 및 출국</h3>
@@ -608,3 +640,4 @@
     </script>
 </body>
 </html>
+
