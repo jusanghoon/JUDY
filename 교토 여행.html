@@ -8,12 +8,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Chosen Palette: Warm Autumn Neutrals with Maple Accents (Light Beige, Dark Stone, Warm Orange, Deep Red, Soft Brown) -->
-    <!-- Application Structure Plan: Tab-based navigation for "여행 개요", "1일차", "2일차", "3일차", and "여행 팁". Each day's tab displays a chronological itinerary with image placeholders. Day 3 Nanzen-ji area lunch options updated with 2-image grid placeholders for each restaurant. -->
+    <!-- Application Structure Plan: Tab-based navigation for "여행 개요", "1일차", "2일차", "3일차", and "여행 팁". Each day's tab displays a chronological itinerary with image placeholders. Image display CSS updated to ensure images are shown in their original aspect ratio without cropping, particularly for multi-image layouts. -->
     <!-- Visualization & Content Choices: 
         - Itinerary Data: Structured HTML, Tailwind styling, Unicode icons, image placeholders. Interaction: Tab navigation, sunny/rainy toggles.
-        - Key Info: Structured HTML in "여행 개요".
+        - Key Info: Structured HTML in "여행 개요". Accommodation image placeholder updated with user's Imgur link.
         - Budget Information: Doughnut chart (Chart.js) in "여행 개요".
-        - Image Placeholders: `<img>` tags with placeholder `src` and descriptive `alt`. Day 3 Nanzen-ji area lunch options now feature `multi-image-container` for each restaurant to hold two images side-by-side. The previous 3-image grid at the end of the lunch section is removed, as images are now per-restaurant.
+        - Image Placeholders: `<img>` tags with placeholder `src`. CSS ensures `height: auto` and appropriate width management by parent containers (flex/grid) to maintain aspect ratio and prevent cropping for all image layouts (single, multi, three-grid, four-grid).
         - Confirmation: NO SVG graphics used. NO Mermaid JS used.
     -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
@@ -113,29 +113,37 @@
             margin-top: 0.75rem;
             margin-bottom: 0.75rem;
         }
-        .image-placeholder-container img, .multi-image-container img, .three-image-grid img, .four-image-grid img { /* Base image styling */
-            height: auto; /* Default to auto, specific containers might override */
+        /* Base image styling to maintain aspect ratio */
+        .image-placeholder-container img, 
+        .multi-image-container img, 
+        .three-image-grid img, 
+        .four-image-grid img {
+            width: 100%; /* Fill container width */
+            height: auto; /* Maintain aspect ratio */
+            max-width: 100%; /* Ensure it doesn't overflow its column/cell */
             border-radius: 0.5rem;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             display: block; 
         }
         
+        .single-image-container img { /* For single centered images that might be smaller than container */
+            max-width: 400px; /* Example max width for single large image */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
         .multi-image-container { /* For 2 images side-by-side */
             display: flex;
-            flex-direction: column; /* Stack on smallest screens */
+            flex-direction: column; 
             gap: 1rem; 
-            justify-content: center; 
-            align-items: center; 
         }
         @media (min-width: 640px) { 
             .multi-image-container {
                 flex-direction: row; 
+                align-items: flex-start; /* Align to top if heights differ */
             }
-            .multi-image-container img { 
-                width: calc(50% - 0.5rem); /* Each image takes half width minus half gap */
-                max-width: 250px; /* Increased max-width for better display */
-                height: 180px; /* Consistent height for side-by-side images */
-                object-fit: cover;
+            .multi-image-container > div { /* Wrapper for each image in multi-image */
+                 width: calc(50% - 0.5rem); /* Each image container takes half width minus half gap */
             }
         }
 
@@ -152,17 +160,8 @@
                 grid-template-columns: repeat(2, 1fr); /* 2x2 grid */
             }
         }
-        .three-image-grid img, .four-image-grid img { 
-            width: 100%;
-            height: 150px; 
-            object-fit: cover; 
-        }
-        
-        .single-image-container img { /* For single centered images */
-            max-width: 400px; 
-            margin-left: auto;
-            margin-right: auto;
-        }
+        /* No specific height or object-fit needed for .three-image-grid img and .four-image-grid img, 
+           as base styling already sets height: auto and width: 100% */
 
     </style>
 </head>
@@ -200,9 +199,11 @@
                         <p><strong>가격:</strong> 1박 약 505,918원 (2박 총액: 1,011,836원)</p>
                         <p><strong>특징:</strong> 무료 주차 공간, 슈퍼호스트, 뒷마당.</p>
                         <p><strong>주변 편의시설:</strong> 편의점(로손) 도보 1분, 푸드마켓(프레스코) 도보 3분, 오카자키 사쿠라 산책로 도보 3분.</p>
-                         <div class="image-placeholder-container multi-image-container">
-                            <img src="1.png" alt="교토 사쿄구 숙소 사진 1">
-                            <img src="2.png" alt="교토 사쿄구 숙소 사진 2">
+                         <div class="image-placeholder-container">
+                            <div class="multi-image-container">
+                                <div class="w-full sm:w-1/2"><img src="https://i.imgur.com/0McvleB.png" alt="교토 사쿄구 숙소 사진 1"></div>
+                                <div class="w-full sm:w-1/2"><img src="https://i.imgur.com/XKDGeD2.png" alt="교토 숙소 실제 이미지 (Imgur)"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -236,10 +237,10 @@
                         <li>
                             <strong>교토 가정식 (오반자이):</strong> 숙소 근처나 기온 지역. 제철 재료, 다양한 반찬.
                             <div class="image-placeholder-container four-image-grid mt-2">
-                                <img src="https://placehold.co/300x200/F3EADA/6D4C41?text=오반자이+정갈한+차림" alt="교토 오반자이 요리 예시 1">
-                                <img src="https://placehold.co/300x200/FEFBF6/BF5700?text=다양한+교토+반찬" alt="교토 오반자이 요리 예시 2">
-                                <img src="https://placehold.co/300x200/E67E22/FFFFFF?text=따뜻한+오반자이+가게" alt="교토 오반자이 요리 예시 3">
-                                <img src="https://placehold.co/300x200/D35400/FFFFFF?text=오반자이+단체석+분위기" alt="교토 오반자이 요리 예시 4">
+                                <img src="https://placehold.co/300x200/F3EADA/6D4C41?text=오반자이+1" alt="교토 오반자이 요리 예시 1">
+                                <img src="https://placehold.co/300x200/FEFBF6/BF5700?text=오반자이+2" alt="교토 오반자이 요리 예시 2">
+                                <img src="https://placehold.co/300x200/E67E22/FFFFFF?text=오반자이+3" alt="교토 오반자이 요리 예시 3">
+                                <img src="https://placehold.co/300x200/D35400/FFFFFF?text=오반자이+4" alt="교토 오반자이 요리 예시 4">
                             </div>
                         </li>
                         <li>
@@ -260,9 +261,11 @@
                         </li>
                         <li>
                             <strong>폰토쵸 강변 식당 & 캐주얼 일식 (덮밥, 돈카츠 등):</strong> 폰토쵸에는 다양한 종류의 식당이 있으며, 숙소 근처나 시내 곳곳에서 덮밥, 돈카츠 등 캐주얼한 일식도 즐길 수 있습니다.
-                            <div class="image-placeholder-container multi-image-container mt-2">
-                                <img src="https://placehold.co/600x400/F39C12/FFFFFF?text=폰토쵸+강변+식당+지도" alt="폰토쵸 강변 식당 지도 예시">
-                                <img src="https://placehold.co/600x400/A0522D/FFFFFF?text=교토+돈카츠+덮밥+지도" alt="교토 돈카츠 또는 덮밥집 지도 예시">
+                            <div class="image-placeholder-container">
+                                <div class="multi-image-container mt-2">
+                                    <div class="w-full sm:w-1/2"><img src="https://placehold.co/600x400/F39C12/FFFFFF?text=폰토쵸+강변+식당+지도" alt="폰토쵸 강변 식당 지도 예시"></div>
+                                    <div class="w-full sm:w-1/2"><img src="https://placehold.co/600x400/A0522D/FFFFFF?text=교토+돈카츠+덮밥+지도" alt="교토 돈카츠 또는 덮밥집 지도 예시"></div>
+                                </div>
                             </div>
                         </li>
                     </ul>
@@ -386,22 +389,22 @@
                                 <li>
                                     오쿠탄 (奥丹) 또는 준세이 (順正): 전통 유도후(따뜻한 두부 요리) 전문점. 아름다운 정원을 보며 식사 가능. (어르신들께 특히 좋음)
                                     <div class="image-placeholder-container multi-image-container mt-2">
-                                        <img src="https://placehold.co/400x300/F3EADA/6D4C41?text=오쿠탄+유도후" alt="오쿠탄 유도후 예시">
-                                        <img src="https://placehold.co/400x300/FEFBF6/BF5700?text=준세이+정원" alt="준세이 정원 예시">
+                                        <div class="w-full sm:w-1/2"><img src="https://placehold.co/400x300/F3EADA/6D4C41?text=오쿠탄+유도후" alt="오쿠탄 유도후 예시"></div>
+                                        <div class="w-full sm:w-1/2"><img src="https://placehold.co/400x300/FEFBF6/BF5700?text=준세이+정원" alt="준세이 정원 예시"></div>
                                     </div>
                                 </li>
                                 <li>
                                     블루 보틀 커피 교토 카페 (Blue Bottle Coffee Kyoto Cafe): 세련된 분위기의 카페. 가벼운 브런치나 샌드위치, 커피. (젊은 세대 선호)
                                     <div class="image-placeholder-container multi-image-container mt-2">
-                                        <img src="https://placehold.co/400x300/E67E22/FFFFFF?text=블루보틀+외관" alt="블루보틀 교토 카페 외관 예시">
-                                        <img src="https://placehold.co/400x300/D35400/FFFFFF?text=블루보틀+커피와+디저트" alt="블루보틀 커피와 디저트 예시">
+                                        <div class="w-full sm:w-1/2"><img src="https://placehold.co/400x300/E67E22/FFFFFF?text=블루보틀+외관" alt="블루보틀 교토 카페 외관 예시"></div>
+                                        <div class="w-full sm:w-1/2"><img src="https://placehold.co/400x300/D35400/FFFFFF?text=블루보틀+커피와+디저트" alt="블루보틀 커피와 디저트 예시"></div>
                                     </div>
                                 </li>
                                 <li>
                                     야마모토멘조 (山元麺蔵): 매우 유명한 우동 맛집 (대기 길 수 있음, 시간 여유 확인).
                                     <div class="image-placeholder-container multi-image-container mt-2">
-                                        <img src="https://placehold.co/400x300/F39C12/FFFFFF?text=야마모토멘조+우동" alt="야마모토멘조 우동 예시">
-                                        <img src="https://placehold.co/400x300/A0522D/FFFFFF?text=야마모토멘조+가게+앞" alt="야마모토멘조 가게 앞 대기줄 예시">
+                                        <div class="w-full sm:w-1/2"><img src="https://placehold.co/400x300/F39C12/FFFFFF?text=야마모토멘조+우동" alt="야마모토멘조 우동 예시"></div>
+                                        <div class="w-full sm:w-1/2"><img src="https://placehold.co/400x300/A0522D/FFFFFF?text=야마모토멘조+가게+앞" alt="야마모토멘조 가게 앞 대기줄 예시"></div>
                                     </div>
                                 </li>
                             </ul>
@@ -411,15 +414,15 @@
                                 <li>
                                     교토역 이세탄 백화점 11층 '잇포 초지안(イートパラダイス)' 식당가: 다양한 종류의 고급 레스토랑 밀집.
                                     <div class="image-placeholder-container multi-image-container mt-2">
-                                        <img src="https://placehold.co/400x300/BDC3C7/FFFFFF?text=이세탄+백화점+식당가1" alt="이세탄 백화점 식당가 모습 예시 1">
-                                        <img src="https://placehold.co/400x300/8E44AD/FFFFFF?text=이세탄+백화점+식당가2" alt="이세탄 백화점 식당가 음식 예시 2">
+                                        <div class="w-full sm:w-1/2"><img src="https://placehold.co/400x300/BDC3C7/FFFFFF?text=이세탄+백화점+식당가1" alt="이세탄 백화점 식당가 모습 예시 1"></div>
+                                        <div class="w-full sm:w-1/2"><img src="https://placehold.co/400x300/8E44AD/FFFFFF?text=이세탄+백화점+식당가2" alt="이세탄 백화점 식당가 음식 예시 2"></div>
                                     </div>
                                 </li>
                                 <li>
                                     교토 라멘 코지 (京都拉麺小路): 교토역 빌딩 10층. 전국 유명 라멘 가게들을 한 곳에서 맛볼 수 있음.
                                      <div class="image-placeholder-container multi-image-container mt-2">
-                                        <img src="https://placehold.co/400x300/BF5700/FFFFFF?text=교토+라멘코지+입구" alt="교토 라멘코지 입구 예시">
-                                        <img src="https://placehold.co/400x300/E67E22/FFFFFF?text=라멘코지+라멘+종류" alt="교토 라멘코지 라멘 종류 예시">
+                                        <div class="w-full sm:w-1/2"><img src="https://placehold.co/400x300/BF5700/FFFFFF?text=교토+라멘코지+입구" alt="교토 라멘코지 입구 예시"></div>
+                                        <div class="w-full sm:w-1/2"><img src="https://placehold.co/400x300/E67E22/FFFFFF?text=라멘코지+라멘+종류" alt="교토 라멘코지 라멘 종류 예시"></div>
                                     </div>
                                 </li>
                             </ul>
@@ -605,4 +608,3 @@
     </script>
 </body>
 </html>
-
